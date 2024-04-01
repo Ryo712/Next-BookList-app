@@ -1,10 +1,8 @@
-// next/pages/index.tsx
 import React, { useState, useEffect } from 'react';
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
   const [items, setItems] = useState<{ id: number; title: string; description: string }[]>([]);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +17,35 @@ const MyComponent = () => {
 
     fetchData();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      title: { value: string };
+      description: { value: string };
+    };
+  
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: target.title.value,
+          description: target.description.value,
+        }),
+      });
+      if (response.ok) {
+        console.log('Task created successfully');
+        window.location.href = '/'; // リダイレクトを行う
+      } else {
+        console.error('Failed to create task');
+      }
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
+  };
 
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
@@ -38,7 +65,7 @@ const MyComponent = () => {
       </div>
       
       {/* 追加：フォームの部分 */}
-      <form action="/api/tasks" method="post">
+      <form onSubmit={handleSubmit}>
         <input type="text" name="title" placeholder="タイトル" />
         <input type="text" name="description" placeholder="説明" />
         <button type="submit">作成</button>
