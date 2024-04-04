@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Card from '../components/Card'; // Cardコンポーネントをインポート
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
@@ -73,13 +74,12 @@ const MyComponent = () => {
       
       <div>
         <h1>アイテム一覧</h1>
-        <ul>
+        <div className="container mx-auto mt-10">
+          {/* Cardコンポーネントを使ってFirestoreから取得したデータを表示 */}
           {items.map((task) => (
-            <li key={task.id}>
-              {task.title} - {task.description}
-            </li>
+            <Card key={task.id} id={task.id} title={task.title} description={task.description} />
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
