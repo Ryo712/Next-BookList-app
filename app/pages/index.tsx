@@ -3,7 +3,7 @@ import Card from '../components/Card'; // Cardコンポーネントをインポ�
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
-  const [items, setItems] = useState<{ id: number; title: string; description: string }[]>([]);
+  const [items, setItems] = useState<{ id: number; title: string; description: string; status: string }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +77,7 @@ const MyComponent = () => {
         <div className="container mx-auto mt-10">
           {/* Cardコンポーネントを使ってFirestoreから取得したデータを表示 */}
           {items.map((task) => (
-            <Card key={task.id} id={task.id} title={task.title} description={task.description} />
+            <Card key={task.id} id={task.id} title={task.title} description={task.description} status={task.status} />
           ))}
         </div>
       </div>
