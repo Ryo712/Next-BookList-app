@@ -66,7 +66,7 @@ const MyComponent = () => {
       </div>
       
       {/* 追加：フォームの部分 */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="ml-60">
         <input type="text" name="title" placeholder="タイトル" />
         <input type="text" name="description" placeholder="説明" />
         <button type="submit">作成</button>
