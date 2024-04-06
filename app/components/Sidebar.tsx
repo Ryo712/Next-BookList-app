@@ -15,7 +15,9 @@ const Sidebar = () => {
   return (
     <aside className="sidebar flex-shrink-0 w-60 h-screen bg-white text-grey-800 flex flex-col shadow-2xl fixed left-0 top-0 bottom-0 z-10">
       <div className="px-4 py-6">
-        <div className="text-xl font-semibold text-gray-800 text-center">Book List</div>
+      <Link href="/">
+        <div className="text-xl font-semibold text-gray-800 text-center cursor-pointer">Book List</div>
+      </Link>
         <div className="flex flex-col items-center mt-6">
           <img
             className="h-16 w-16 rounded-full object-cover"
