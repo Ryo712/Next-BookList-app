@@ -1,51 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../../app/firebaseConfig'; // firebaseConfig.ts から db をインポート
+// app/pages/unread.tsx
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: number;
-}
+import { useEffect, useState } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import { db } from '../firebaseConfig'; // firebaseConfig.tsのパスを正しく指定してください
+import { collection, query, where, getDocs } from 'firebase/firestore'; // 追加
 
 const UnreadPage = () => {
-  const [unreadData, setUnreadData] = useState<Task[]>([]); // 未読データの状態を管理するステート
+  const [unreadTasks, setUnreadTasks] = useState<{ id: string; title: string }[]>([]);
+
 
   useEffect(() => {
-    const fetchUnreadData = async () => {
+    // Firestoreからstatusが1のデータを取得する
+    const fetchUnreadTasks = async () => {
       try {
-        // Firestore データベースから status: 1 のデータを取得
-        const querySnapshot = await db.collection('tasks').where('status', '==', 1).get();
-        const unreadData: Task[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const task: Task = {
-            id: doc.id,
-            title: data.title,
-            description: data.description,
-            status: data.status
-          };
-          unreadData.push(task);
-        });
-        setUnreadData(unreadData);
+        const q = query(collection(db, 'tasks'), where('status', '==', 1)); // クエリを作成
+        const querySnapshot = await getDocs(q); // クエリを実行
+        const unreadTasksData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          title: doc.data().title,
+        }));
+        setUnreadTasks(unreadTasksData);
       } catch (error) {
-        console.error('Error fetching unread data:', error);
+        console.error('データの取得に失敗しました:', error);
       }
     };
 
-    fetchUnreadData(); // fetchUnreadData 関数を実行して未読データを取得
-  }, []); // マウント時の一度だけデータを取得するため、空の配列を依存リストに指定
+    fetchUnreadTasks();
+
+    // cleanup function to unsubscribe from Firestore
+    return () => {};
+  }, []);
 
   return (
     <div>
-      <h1>Unread Page</h1>
-      {/* 取得した未読データをマップして表示 */}
-      {unreadData.map((item) => (
-        <div key={item.id}>
-          <h2>{item.title}</h2>
-          <p>{item.description}</p>
-        </div>
-      ))}
+      <h1>未読タスク</h1>
+      <ul>
+        {unreadTasks.map((task) => (
+          <li key={task.id}>{task.title}</li>
+        ))}
+      </ul>
     </div>
   );
 };

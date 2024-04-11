@@ -1,10 +1,12 @@
-// HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../components/Card';
 
 const HomePage: React.FC = () => {
   const [items, setItems] = useState<{ id: number; title: string; description: string; status: string }[]>([]);
+  
+  // 新しいステートとしてunreadTasksを追加
+  const [unreadTasks, setUnreadTasks] = useState<{ id: number; title: string; description: string; status: string }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,6 +20,21 @@ const HomePage: React.FC = () => {
     };
 
     fetchData();
+  }, []);
+
+  // ステータスが1のデータを取得するfetchUnreadTasks関数を定義
+  useEffect(() => {
+    const fetchUnreadTasks = async () => {
+      try {
+        const response = await fetch('/api/tasks/unread');
+        const unreadTasks = await response.json();
+        setUnreadTasks(unreadTasks);
+      } catch (error) {
+        console.error('Error fetching unread tasks:', error);
+      }
+    };
+
+    fetchUnreadTasks();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,6 +103,16 @@ const HomePage: React.FC = () => {
               <Card key={task.id} id={task.id} title={task.title} description={task.description} status={task.status} />
             ))}
           </div>
+        </div>
+
+        {/* 追加：未読タスクの表示 */}
+        <div>
+          <h1>未読タスク</h1>
+          <ul>
+            {unreadTasks.map((task) => (
+              <li key={task.id}>{task.title}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
