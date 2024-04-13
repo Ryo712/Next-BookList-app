@@ -21,3 +21,45 @@ export const getStatusOneData = async () => {
     throw error;
   }
 };
+//statusが2のデータを取得
+export const getStatusTwoData = async () => {
+  try {
+    // 'tasks'コレクション内のデータをクエリする
+    const q = query(collection(db, 'tasks'), where('status', '==', 2));
+    const querySnapshot = await getDocs(q);
+
+    // クエリ結果を配列に変換して返す
+    const data = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      title: doc.data().title,
+      ...doc.data()
+    }));
+    
+    return data;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    throw error;
+  }
+};
+
+// statusが3のデータを取得する関数
+export const getStatusThreeData = async () => {
+  try {
+    // 'tasks'コレクション内のデータをクエリする
+    const q = query(collection(db, 'tasks'), where('status', '==', 3));
+    const querySnapshot = await getDocs(q);
+
+    // クエリ結果を配列に変換して返す
+    const data = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      title: doc.data().title,
+      ...doc.data()
+    }));
+    
+    return data;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    throw error;
+  }
+};
+

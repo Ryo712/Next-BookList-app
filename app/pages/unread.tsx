@@ -22,7 +22,7 @@ const UnreadPage = () => {
 
   return (
     <div>
-      <h1>未読タスク</h1>
+      <h1>Unread Books</h1>
       <ul>
       {unreadTasks.length > 0 && // unreadTasksが空でないことを確認
           unreadTasks.map((task) => (
