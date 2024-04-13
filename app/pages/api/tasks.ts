@@ -1,7 +1,7 @@
-// next/pages/api/tasks.ts
+//pages/api/tasks.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../firebaseConfig'; // firebaseConfig.ts をインポート
-import { collection, getDocs, addDoc } from 'firebase/firestore'; // Firestore モジュールから collection メソッドをインポート
+import { collection, getDocs, addDoc, query, where } from 'firebase/firestore'; // Firestore モジュールから必要なメソッドをインポート
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         status: 1,
       };
 
-      await addDoc(collection(db, 'tasks'), data); // Firestore の collection メソッドを使用してコレクションを参照
+      await addDoc(collection(db, 'tasks'), data); 
 
       res.status(201).json({ message: 'Data saved successfully' });
     } catch (error) {
@@ -23,7 +23,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'GET') {
     try {
-      const tasksSnapshot = await getDocs(collection(db, 'tasks')); // Firestore の collection メソッドを使用してコレクションを参照
+      let tasksSnapshot;
+      if (req.url === '/unread') {
+        // ステータスが1のタスクのみをクエリ
+        const q = query(collection(db, 'tasks'), where('status', '==', 1));
+        tasksSnapshot = await getDocs(q);
+      } else if (req.url === '/reading') {
+        // ステータスが2のタスクのみをクエリ
+        const q = query(collection(db, 'tasks'), where('status', '==', 2));
+        tasksSnapshot = await getDocs(q);
+      } else if (req.url === '/read') {
+        // ステータスが3のタスクのみをクエリ
+        const q = query(collection(db, 'tasks'), where('status', '==', 3));
+        tasksSnapshot = await getDocs(q);
+      } else {
+        // それ以外の場合はすべてのタスクを取得
+        tasksSnapshot = await getDocs(collection(db, 'tasks'));
+      }
+
       const data = tasksSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
       res.status(200).json(data);
