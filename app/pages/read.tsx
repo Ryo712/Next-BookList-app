@@ -23,16 +23,21 @@ const ReadPage = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Read Books</h1>
+        <div className="flex">
+        <div className="w-1/4"> {/* サイドバー */}
+            {/* サイドバーの内容をここに追加 */}
+        </div>
+        <div className="w-3/4"> {/* データ表示部分 */}
+            <h1>Reading Books</h1>
             <ul>
-                {readTasks.length > 0 && // readTasksが空でないことを確認
+                {readTasks.length > 0 && // readingTasksが空でないことを確認
                     readTasks.map((task) => (
                         <li key={task.id}>{task.title}</li>
                     ))}
             </ul>
         </div>
-    );
+    </div>
+);
 };
 
 export default ReadPage;

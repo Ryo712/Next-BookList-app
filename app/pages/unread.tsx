@@ -21,16 +21,21 @@ const UnreadPage = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex">
+    <div className="w-1/4"> {/* サイドバー */}
+      {/* サイドバーの内容をここに追加 */}
+    </div>
+    <div className="w-3/4"> {/* データ表示部分 */}
       <h1>Unread Books</h1>
       <ul>
-      {unreadTasks.length > 0 && // unreadTasksが空でないことを確認
+        {unreadTasks.length > 0 && // unreadTasksが空でないことを確認
           unreadTasks.map((task) => (
             <li key={task.id}>{task.title}</li>
           ))}
       </ul>
     </div>
-  );
+  </div>
+);
 };
 
 export default UnreadPage;
