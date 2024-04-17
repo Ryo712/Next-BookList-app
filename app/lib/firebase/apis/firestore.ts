@@ -12,7 +12,8 @@ export const getStatusOneData = async () => {
     const data = querySnapshot.docs.map(doc => ({
       id: doc.id,
       title: doc.data().title,
-      ...doc.data()
+      description: doc.data().description, // descriptionを追加
+      status: doc.data().status // statusを追加
     }));
     
     return data;
@@ -21,7 +22,7 @@ export const getStatusOneData = async () => {
     throw error;
   }
 };
-//statusが2のデータを取得
+// statusが2のデータを取得する関数
 export const getStatusTwoData = async () => {
   try {
     // 'tasks'コレクション内のデータをクエリする
@@ -32,7 +33,8 @@ export const getStatusTwoData = async () => {
     const data = querySnapshot.docs.map(doc => ({
       id: doc.id,
       title: doc.data().title,
-      ...doc.data()
+      description: doc.data().description,
+      status: doc.data().status,
     }));
     
     return data;
@@ -53,7 +55,8 @@ export const getStatusThreeData = async () => {
     const data = querySnapshot.docs.map(doc => ({
       id: doc.id,
       title: doc.data().title,
-      ...doc.data()
+      description: doc.data().description,
+      status: doc.data().status,
     }));
     
     return data;
@@ -62,4 +65,3 @@ export const getStatusThreeData = async () => {
     throw error;
   }
 };
-
