@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../firebaseConfig'; // firebaseConfig.ts をインポート
 import { collection, getDocs, addDoc, query, where } from 'firebase/firestore'; // Firestore モジュールから必要なメソッドをインポート
 
+//req.method === 'POST'をチェックしPOSTリクエストかどうかを確認
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
@@ -21,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error saving data:', error);
       res.status(500).json({ error: 'Failed to save data' });
     }
+//req.method === 'GET'をチェックしGETリクエストかどうかを確認
   } else if (req.method === 'GET') {
     try {
       let tasksSnapshot;
@@ -50,6 +52,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    res.status(405).end(`Method ${req.method} Not Allowed`); //上記条件に当てはまらない場合、許可されていないメソッド'405'を返す
   }
 }
