@@ -26,7 +26,7 @@ const ReadPage = () => {
                 {/* サイドバーの内容をここに追加 */}
             </div>
             <div className="w-3/4"> {/* データ表示部分 */}
-                <h1>Read Books</h1>
+                <h1 className="text-3xl font-bold">Unread Books</h1>
                 <ul>
                     {readTasks.length > 0 && // readTasksが空でないことを確認
                         readTasks.map((task) => (
