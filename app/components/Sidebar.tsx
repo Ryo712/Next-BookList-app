@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faBookOpen, faCheckDouble, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, DocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
+export const SearchResultsContext = createContext<{
+  searchResults: DocumentSnapshot<DocumentData>[];
+  setSearchResults: React.Dispatch<React.SetStateAction<DocumentSnapshot<DocumentData>[]>>;
+} | null>(null);
+
 const Sidebar = () => {
+  const router = useRouter();
   const navigation = [
     { name: 'Unread', icon: faBook },
     { name: 'Reading', icon: faBookOpen },
@@ -13,14 +20,13 @@ const Sidebar = () => {
   ];
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [tasks, setTasks] = useState([]);
+  const [searchResults, setSearchResults] = useState<DocumentSnapshot<DocumentData>[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       const tasksCollectionRef = collection(db, 'tasks');
       const querySnapshot = await getDocs(tasksCollectionRef);
-      const tasksData = querySnapshot.docs.map((doc) => doc.data());
-      setTasks(tasksData);
+      setSearchResults(querySnapshot.docs);
     };
 
     fetchTasks();
@@ -40,61 +46,18 @@ const Sidebar = () => {
       );
     }
 
-    const querySnapshot = await getDocs(q);
-    const results = querySnapshot.docs.map((doc) => doc.data());
-    setTasks(results);
+    try {
+      const querySnapshot = await getDocs(q);
+      setSearchResults(querySnapshot.docs);
+    } catch (error) {
+      console.error('Error searching tasks:', error);
+    }
   };
 
   return (
-    <aside className="sidebar flex-shrink-0 w-60 h-screen bg-white text-grey-800 flex flex-col shadow-2xl fixed left-0 top-0 bottom-0 z-10">
-      <div className="px-4 py-6">
-        <Link href="/">
-          <div className="text-xl font-semibold text-gray-800 text-center cursor-pointer flex items-center justify-center">
-            Book List
-          </div>
-        </Link>
-        <div className="flex flex-col items-center mt-6">
-          <img
-            className="h-16 w-16 rounded-full object-cover"
-            src="onepiece01_luffy.png"
-            alt="User profile"
-          />
-          <div className="text-center mt-4 mb-4">
-            <p className="text-sm font-semibold text-gray-800">Michael Jackson</p>
-            <p className="text-xs text-gray-400">Administrator</p>
-          </div>
-          <div className="relative w-full mb-6">
-            <input
-              type="search"
-              className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md focus:outline-none focus:ring focus:border-blue-300 border border-gray-300"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
-            </div>
-          </div>
-          <button onClick={handleSearch} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Search</button>
-        </div>
-        <nav className="flex flex-col mt-2">
-          {navigation.map((item) => (
-            <Link href={item.name === 'Unread' ? '/unread' : item.name === 'Reading' ? '/reading' : '/read'} key={item.name}>
-              <div className={`flex items-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg ${
-                item.name === 'Dashboard' ? 'bg-gray-700 text-white' : 'hover:bg-gray-100'
-              }`}
-              >
-                <FontAwesomeIcon icon={item.icon} className="text-3xl mr-3" />
-                {item.name}
-              </div>
-            </Link>
-          ))}
-        </nav>
-      </div>
-      <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
-        This is a Dashboard Sidebar Navigation by pantazisoftware.
-      </footer>
-    </aside>
+    <SearchResultsContext.Provider value={{ searchResults, setSearchResults }}>
+      {/* Sidebar 内容 */}
+    </SearchResultsContext.Provider>
   );
 };
 
