@@ -1,10 +1,11 @@
-//index.tsx
 import React, { useState, useEffect } from 'react';
-import Card from '../components/Card'; // Cardコンポーネントをインポート
+import Sidebar from '../components/Sidebar';
+import Card from '../components/Card';
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
   const [items, setItems] = useState<{ id: number; title: string; description: string; status: string }[]>([]);
+  const [searchResult, setSearchResult] = useState<{ id: number; title: string; description: string; status: string } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +41,7 @@ const MyComponent = () => {
       });
       if (response.ok) {
         console.log('Task created successfully');
-        window.location.href = '/'; // リダイレクトを行う
+        window.location.href = '/';
       } else {
         console.error('Failed to create task');
       }
@@ -49,25 +50,26 @@ const MyComponent = () => {
     }
   };
 
+  const handleSearch = async (result: { id: number; title: string; description: string; status: string } | null) => {
+    try {
+      setSearchResult(result);
+    } catch (error) {
+      console.error('Error searching tasks:', error);
+    }
+  };
+
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
       <button
         onClick={() => setSidenav(true)}
-        className="..." // ここに適切なクラス名を設定してください
+        className="..."
       >
         {/* ここにSVGアイコンなどのコンテンツを挿入 */}
       </button>
       
-      <div
-        id="sidebar"
-        className={`bg-white h-screen ${sidenav ? '' : 'hidden'}`}
-        onClick={() => setSidenav(false)}
-      >
-        {/* サイドバーの内容 */}
-      </div>
+      <Sidebar onSearchResult={handleSearch} />
       
-      {/* 追加：フォームの部分 */}
-      <form onSubmit={handleSubmit} className="ml-60">
+      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }} className="ml-60">
         <input type="text" name="title" placeholder="タイトル" />
         <input type="text" name="description" placeholder="説明" />
         <button type="submit">作成</button>
@@ -76,10 +78,13 @@ const MyComponent = () => {
       <div>
         <h1>アイテム一覧</h1>
         <div className="container mx-auto mt-10">
-          {/* Cardコンポーネントを使ってFirestoreから取得したデータを表示 */}
-          {items.map((task) => (
-            <Card key={task.id} id={task.id} title={task.title} description={task.description} status={task.status} />
-          ))}
+          {searchResult ? (
+            <Card key={searchResult.id} id={searchResult.id} title={searchResult.title} description={searchResult.description} status={searchResult.status} />
+          ) : (
+            items.map((task) => (
+              <Card key={task.id} id={task.id} title={task.title} description={task.description} status={task.status} />
+            ))
+          )}
         </div>
       </div>
     </div>
