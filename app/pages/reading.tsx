@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { getStatusTwoData } from '../lib/firebase/apis/firestore'; // firestore.tsのパスを正しく指定
+import { getStatusTwoData } from '../lib/firebase/apis/firestore';
+import Card from '../components/Card'; // Card コンポーネントのインポート
 
 const ReadingPage = () => {
-    const [readingTasks, setReadingTasks] = useState<{ id: string; title: string; description: string; status: string; }[]>([]); // 読書中のタスクの状態を管理
+    const [readingTasks, setReadingTasks] = useState<{ id: string; title: string; description: string; status: string; }[]>([]);
 
     useEffect(() => {
         const fetchReadingTasks = async () => {
             try {
-                const data = await getStatusTwoData(); // getStatusTwoData関数を使って読書中のタスクを取得
-                setReadingTasks(data);
+                const data = await getStatusTwoData();
+                // Firestore から取得したデータを適切な形式に整形してセットする
+                const formattedData = data.map((task: any) => ({
+                    id: task.id,
+                    title: task.title,
+                    description: task.description,
+                    status: task.status
+                }));
+                setReadingTasks(formattedData);
             } catch (error) {
                 console.error('データの取得に失敗しました:', error);
             }
@@ -22,18 +30,17 @@ const ReadingPage = () => {
 
     return (
         <div className="flex">
-            <div className="w-1/4"> {/* サイドバー */}
+            <div className="w-1/4">
                 {/* サイドバーの内容をここに追加 */}
             </div>
-            <div className="w-3/4"> {/* データ表示部分 */}
+            <div className="w-3/4">
                 <h1 className="text-3xl font-bold">Reading Books</h1>
                 <ul>
-                    {readingTasks.length > 0 && // readingTasksが空でないことを確認
+                    {readingTasks.length > 0 &&
                         readingTasks.map((task) => (
                             <li key={task.id}>
-                                <p>Title: {task.title}</p>
-                                <p>Description: {task.description}</p>
-                                <p>Status: {task.status}</p>
+                                {/* Card コンポーネントに必要なプロパティを渡す */}
+                                <Card id={task.id} title={task.title} description={task.description} status={task.status} />
                             </li>
                         ))}
                 </ul>

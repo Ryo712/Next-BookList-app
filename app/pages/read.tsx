@@ -1,6 +1,6 @@
-// read.tsx
 import React, { useEffect, useState } from 'react';
-import { getStatusThreeData } from '../lib/firebase/apis/firestore'; // firestore.tsのパスを正しく指定
+import { getStatusThreeData } from '../lib/firebase/apis/firestore';
+import Card from '../components/Card'; // Card コンポーネントのインポート
 
 const ReadPage = () => {
     const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: string; }[]>([]);
@@ -8,8 +8,15 @@ const ReadPage = () => {
     useEffect(() => {
         const fetchReadTasks = async () => {
             try {
-                const data = await getStatusThreeData(); // getStatusThreeData関数を使って読了したタスクを取得
-                setReadTasks(data);
+                const data = await getStatusThreeData();
+                // Firestore から取得したデータを適切な形式に整形してセットする
+                const formattedData = data.map((task: any) => ({
+                    id: task.id,
+                    title: task.title,
+                    description: task.description,
+                    status: task.status
+                }));
+                setReadTasks(formattedData);
             } catch (error) {
                 console.error('データの取得に失敗しました:', error);
             }
@@ -23,24 +30,23 @@ const ReadPage = () => {
 
     return (
         <div className="flex">
-        <div className="w-1/4"> {/* サイドバー */}
-            {/* サイドバーの内容をここに追加 */}
+            <div className="w-1/4">
+                {/* サイドバーの内容をここに追加 */}
+            </div>
+            <div className="w-3/4">
+                <h1 className="text-3xl font-bold">Read Books</h1>
+                <ul>
+                    {readTasks.length > 0 &&
+                        readTasks.map((task) => (
+                            <li key={task.id}>
+                                {/* Card コンポーネントに必要なプロパティを渡す */}
+                                <Card id={task.id} title={task.title} description={task.description} status={task.status} />
+                            </li>
+                        ))}
+                </ul>
+            </div>
         </div>
-        <div className="w-3/4"> {/* データ表示部分 */}
-            <h1 className="text-3xl font-bold">Read Books</h1>
-            <ul>
-                {readTasks.length > 0 && // readTasksが空でないことを確認
-                    readTasks.map((task) => (
-                        <li key={task.id}>
-                            <p>Title: {task.title}</p>
-                            <p>Description: {task.description}</p>
-                            <p>Status: {task.status}</p>
-                        </li>
-                    ))}
-            </ul>
-        </div>
-    </div>
-);
+    );
 };
 
 export default ReadPage;
