@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig'; // Firebaseの設定ファイルからdbをインポート
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 type CardProps = {
-  id: string | number; 
+  id: string | number;
   title: string;
   description: string;
   status: string;
+  onDelete?: () => void; // onDelete プロパティを任意にする
 };
 
-const Card: React.FC<CardProps> = ({ id, title, description, status }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, status, onDelete }) => {
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
 
@@ -22,8 +23,16 @@ const Card: React.FC<CardProps> = ({ id, title, description, status }) => {
   };
 
   const handleSave = async () => {
-    const docRef = doc(db, 'tasks', id.toString()); // id を文字列に変換してパスに追加
+    const docRef = doc(db, 'tasks', id.toString());
     await updateDoc(docRef, { title: editTitle, description: editDescription });
+  };
+
+  const handleDelete = async () => {
+    const docRef = doc(db, 'tasks', id.toString());
+    await deleteDoc(docRef);
+    if (onDelete) {
+      onDelete(); // onDeleteが存在する場合にのみ呼び出す
+    }
   };
 
   return (
@@ -43,9 +52,15 @@ const Card: React.FC<CardProps> = ({ id, title, description, status }) => {
         <p>Status: {status}</p>
         <button
           onClick={handleSave}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
         >
           Save
+        </button>
+        <button
+          onClick={handleDelete}
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Delete
         </button>
       </div>
     </div>

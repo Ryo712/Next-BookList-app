@@ -58,6 +58,13 @@ const MyComponent = () => {
     }
   };
 
+  const handleCardDelete = async () => {
+    // カードが削除された後に、再度データを取得して表示を更新する
+    const response = await fetch('/api/tasks');
+    const items = await response.json();
+    setItems(items);
+  };
+
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
       <button
@@ -79,10 +86,24 @@ const MyComponent = () => {
         <h1>アイテム一覧</h1>
         <div className="container mx-auto mt-10">
           {searchResult ? (
-            <Card key={searchResult.id} id={searchResult.id} title={searchResult.title} description={searchResult.description} status={searchResult.status} />
+            <Card
+              key={searchResult.id}
+              id={searchResult.id}
+              title={searchResult.title}
+              description={searchResult.description}
+              status={searchResult.status}
+              onDelete={handleCardDelete} // カードが削除されたときに再レンダリングを行う関数を渡す
+            />
           ) : (
             items.map((task) => (
-              <Card key={task.id} id={task.id} title={task.title} description={task.description} status={task.status} />
+              <Card
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                status={task.status}
+                onDelete={handleCardDelete} // カードが削除されたときに再レンダリングを行う関数を渡す
+              />
             ))
           )}
         </div>
