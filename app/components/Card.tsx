@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 type CardProps = {
@@ -7,12 +7,14 @@ type CardProps = {
   title: string;
   description: string;
   status: string;
-  onDelete?: () => void; // onDelete プロパティを任意にする
+  onDelete?: () => void; // onDeleteプロパティを任意にする
+  onCheckboxChange?: () => void; // チェックボックスの状態変更を検知する関数を任意にする
 };
 
-const Card: React.FC<CardProps> = ({ id, title, description, status, onDelete }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxChange }) => {
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
+  const [editStatus, setEditStatus] = useState(status);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditTitle(e.target.value);
@@ -23,15 +25,20 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onDelete })
   };
 
   const handleSave = async () => {
-    const docRef = doc(db, 'tasks', id.toString());
-    await updateDoc(docRef, { title: editTitle, description: editDescription });
+    const docRef = doc(db, 'readTasks', id.toString());
+    await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
   };
 
   const handleDelete = async () => {
-    const docRef = doc(db, 'tasks', id.toString());
+    const docRef = doc(db, 'readTasks', id.toString());
     await deleteDoc(docRef);
-    if (onDelete) {
-      onDelete(); // onDeleteが存在する場合にのみ呼び出す
+  };
+
+  const handleCheckboxChange = async () => {
+    const newStatus = editStatus === '1' ? '3' : '1';
+    setEditStatus(newStatus);
+    if (onCheckboxChange) {
+      onCheckboxChange(); // チェックボックスの状態変更を検知する関数を呼び出す
     }
   };
 
@@ -49,7 +56,16 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onDelete })
           onChange={handleDescriptionChange}
           className="mb-3 font-normal text-gray-700 dark:text-gray-400"
         />
-        <p>Status: {status}</p>
+        <p>Status: {editStatus}</p>
+        <label className="inline-flex items-center">
+          <input
+            type="checkbox"
+            checked={editStatus === '3'}
+            onChange={handleCheckboxChange}
+            className="form-checkbox h-5 w-5 text-blue-500"
+          />
+          <span className="ml-2 text-gray-700 dark:text-gray-400">読了</span>
+        </label>
         <button
           onClick={handleSave}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
