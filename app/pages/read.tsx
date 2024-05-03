@@ -1,50 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, onSnapshot, doc, deleteDoc, addDoc, getDoc, getDocs, where } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { getStatusThreeData } from '../lib/firebase/apis/firestore'; // getStatusThreeData をインポート
 import Card from '../components/Card';
 
-const ReadPage = () => {
-  const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: string; }[]>([]);
+const ReadPage: React.FC = () => {
+  const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: string }[]>([]);
 
   useEffect(() => {
-    const readTasksRef = collection(db, 'readTasks');
-    const q = query(readTasksRef);
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const tasks = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        title: doc.data().title,
-        description: doc.data().description,
-        status: doc.data().status,
-      }));
-      setReadTasks(tasks);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleCheckboxChange = async (taskId: string) => {
-    try {
-      const taskDocRef = doc(db, 'readTasks', taskId);
-      const taskDocSnapshot = await getDoc(taskDocRef);
-  
-      if (taskDocSnapshot.exists()) {
-        await deleteDoc(taskDocRef);
-  
-        const unreadTasksRef = collection(db, 'unreadTasks');
-        const taskData = taskDocSnapshot.data();
-        await addDoc(unreadTasksRef, {
-          id: taskId,
-          title: taskData.title,
-          description: taskData.description,
-          status: taskData.status,
-        });
+    const fetchReadTasks = async () => {
+      try {
+        const data = await getStatusThreeData(); // ステータスが3のデータを取得
+        const formattedData = data.map((task: any) => ({
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          status: task.status
+        }));
+        setReadTasks(formattedData);
+      } catch (error) {
+        console.error('データの取得に失敗しました:', error);
       }
-    } catch (error) {
-      console.error('Error moving task to unread:', error);
-    }
-  };
-  
+    };
+
+    fetchReadTasks();
+
+    // クリーンアップ関数
+    return () => {};
+  }, []);
 
   return (
     <div className="flex">
@@ -62,7 +43,6 @@ const ReadPage = () => {
                   title={task.title}
                   description={task.description}
                   status={task.status}
-                  onCheckboxChange={() => handleCheckboxChange(task.id)} // チェックボックスの状態変更を検知する関数を渡す
                 />
               </li>
             ))}
