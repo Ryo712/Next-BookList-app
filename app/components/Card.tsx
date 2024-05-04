@@ -7,8 +7,8 @@ type CardProps = {
   title: string;
   description: string;
   status: string;
-  onDelete?: () => void; // onDeleteプロパティを任意にする
-  onCheckboxChange?: () => void; // チェックボックスの状態変更を検知する関数を任意にする
+  onDelete?: () => void; // onDeleteを追加
+  onCheckboxChange?: () => void;
 };
 
 const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxChange }) => {
@@ -25,20 +25,32 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
   };
 
   const handleSave = async () => {
-    const docRef = doc(db, 'readTasks', id.toString());
-    await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
+    try {
+      const docRef = doc(db, 'tasks', id.toString());
+      await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
+      // セーブ後に元の値を更新
+      title = editTitle;
+      description = editDescription;
+      status = editStatus;
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
   const handleDelete = async () => {
-    const docRef = doc(db, 'readTasks', id.toString());
-    await deleteDoc(docRef);
+    try {
+      const docRef = doc(db, 'tasks', id.toString());
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   const handleCheckboxChange = async () => {
     const newStatus = editStatus === '1' ? '3' : '1';
     setEditStatus(newStatus);
     if (onCheckboxChange) {
-      onCheckboxChange(); // チェックボックスの状態変更を検知する関数を呼び出す
+      onCheckboxChange();
     }
   };
 
