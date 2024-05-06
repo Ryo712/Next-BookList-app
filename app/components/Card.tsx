@@ -25,17 +25,18 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
   };
 
   const handleSave = async () => {
-    try {
-      const docRef = doc(db, 'tasks', id.toString());
-      await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
-      // セーブ後に元の値を更新
-      title = editTitle;
-      description = editDescription;
-      status = editStatus;
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
+  try {
+    const docRef = doc(db, 'tasks', id.toString());
+    await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
+    // ステートを更新
+    setEditTitle(editTitle);
+    setEditDescription(editDescription);
+    setEditStatus(editStatus);
+  } catch (error) {
+    console.error('Error updating task:', error);
+  }
+};
+
 
   const handleDelete = async () => {
     try {

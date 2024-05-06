@@ -10,7 +10,7 @@ const MyComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/tasks?status=1');
+        const response = await fetch('/api/tasks?status=all');
         const items = await response.json();
         setItems(items);
       } catch (error) {
