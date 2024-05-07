@@ -32,7 +32,7 @@ const UnreadPage: React.FC = () => {
     try {
       // Firestore のドキュメントを更新
       const taskDocRef = doc(db, 'tasks', taskId);
-      await updateDoc(taskDocRef, { status: '3' }); // ステータスを3に変更
+      await updateDoc(taskDocRef, { status: 3 }); // ステータスを3に変更
       fetchUnreadTasks(); // データを再取得
     } catch (error) {
       console.error('ステータスの更新に失敗しました:', error);
