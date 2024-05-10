@@ -43,6 +43,7 @@ const ReadPage: React.FC = () => {
                   title={task.title}
                   description={task.description}
                   status={task.status}
+                  checked={Number(task.status) === 3}
                 />
               </li>
             ))}

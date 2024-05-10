@@ -9,6 +9,7 @@ type CardProps = {
   status: string;
   onDelete?: () => void; // onDeleteを追加
   onCheckboxChange?: () => void;
+  checked?: boolean; // checkedプロパティを追加
 };
 
 const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxChange }) => {
