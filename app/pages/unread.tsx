@@ -52,12 +52,13 @@ const UnreadPage: React.FC = () => {
               <li key={task.id}>
                 {/* Card コンポーネントに必要なプロパティを渡す */}
                 <Card
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  status={task.status}
-                  onCheckboxChange={() => handleCheckboxChange(task.id)} // チェックボックスの状態変更を検知する関数を渡す
+                    id={task.id}
+                    title={task.title}
+                    description={task.description}
+                    status={task.status}
+                    onCheckboxChange={() => handleCheckboxChange(task.id)} // チェックボックスの状態変更を検知する関数を渡す
                 />
+
               </li>
             ))}
         </ul>
