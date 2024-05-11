@@ -74,7 +74,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
         <label className="inline-flex items-center">
           <input
             type="checkbox"
-            checked={editStatus === '3'}
+            checked={Number(editStatus) === 3} //値を数値型に変換しその結果が数値の3と等しいかどうかを比較
             onChange={handleCheckboxChange}
             className="form-checkbox h-5 w-5 text-blue-500"
           />
