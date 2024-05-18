@@ -3,7 +3,7 @@ import { getStatusThreeData } from '../lib/firebase/apis/firestore'; // getStatu
 import Card from '../components/Card';
 
 const ReadPage: React.FC = () => {
-  const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: string }[]>([]);
+  const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string  }[]>([]);
 
   useEffect(() => {
     const fetchReadTasks = async () => {
@@ -13,7 +13,9 @@ const ReadPage: React.FC = () => {
           id: task.id,
           title: task.title,
           description: task.description,
-          status: task.status
+          status: Number(task.status),
+          author: task.author,  
+          url: task.url
         }));
         setReadTasks(formattedData);
       } catch (error) {
@@ -43,6 +45,8 @@ const ReadPage: React.FC = () => {
                   title={task.title}
                   description={task.description}
                   status={task.status}
+                  author={task.author}
+                  url={task.url}
                   checked={Number(task.status) === 3} //値を数値型に変換しその結果が数値の3と等しいかどうかを比較
                 />
               </li>
