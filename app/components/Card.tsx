@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
-import { doc, updateDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 type CardProps = {
-  id: string | number;
+  id: string;
   title: string;
   description: string;
-  status: string;
-  onDelete?: () => void; // onDeleteを追加
+  status: number;
+  author: string;
+  url: string;
+  onDelete?: () => void;
   onCheckboxChange?: () => void;
-  checked?: boolean; // checkedプロパティを追加
+  checked?: boolean;
 };
 
-const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxChange }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, status, author, url, onCheckboxChange }) => {
   const [editTitle, setEditTitle] = useState(title);
   const [editDescription, setEditDescription] = useState(description);
   const [editStatus, setEditStatus] = useState(status);
+  const [editAuthor, setEditAuthor] = useState(author);
+  const [editUrl, setEditUrl] = useState(url);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, 'tasks', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setEditTitle(data.title);
+          setEditDescription(data.description);
+          setEditStatus(data.status);
+          setEditAuthor(data.author);
+          setEditUrl(data.url);
+        } else {
+          console.log('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching task:', error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditTitle(e.target.value);
@@ -25,23 +52,26 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
     setEditDescription(e.target.value);
   };
 
-  const handleSave = async () => {
-  try {
-    const docRef = doc(db, 'tasks', id.toString());
-    await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus });
-    // ステートを更新
-    setEditTitle(editTitle);
-    setEditDescription(editDescription);
-    setEditStatus(editStatus);
-  } catch (error) {
-    console.error('Error updating task:', error);
-  }
-};
+  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditAuthor(e.target.value);
+  };
 
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditUrl(e.target.value);
+  };
+
+  const handleSave = async () => {
+    try {
+      const docRef = doc(db, 'tasks', id);
+      await updateDoc(docRef, { title: editTitle, description: editDescription, status: editStatus, author: editAuthor, url: editUrl });
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
 
   const handleDelete = async () => {
     try {
-      const docRef = doc(db, 'tasks', id.toString());
+      const docRef = doc(db, 'tasks', id);
       await deleteDoc(docRef);
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -49,7 +79,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
   };
 
   const handleCheckboxChange = async () => {
-    const newStatus = editStatus === '1' ? '3' : '1';
+    const newStatus = editStatus === 1 ? 3 : 1; // 数値型として比較する
     setEditStatus(newStatus);
     if (onCheckboxChange) {
       onCheckboxChange();
@@ -70,11 +100,25 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, onCheckboxC
           onChange={handleDescriptionChange}
           className="mb-3 font-normal text-gray-700 dark:text-gray-400"
         />
+        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Author</label>
+        <input
+          type="text"
+          value={editAuthor}
+          onChange={handleAuthorChange}
+          className="mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white"
+        />
+        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">URL</label>
+        <input
+          type="text"
+          value={editUrl}
+          onChange={handleUrlChange}
+          className="mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white"
+        />
         <p>Status: {editStatus}</p>
         <label className="inline-flex items-center">
           <input
             type="checkbox"
-            checked={Number(editStatus) === 3} //値を数値型に変換しその結果が数値の3と等しいかどうかを比較
+            checked={editStatus === 3}
             onChange={handleCheckboxChange}
             className="form-checkbox h-5 w-5 text-blue-500"
           />

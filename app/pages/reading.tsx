@@ -3,7 +3,7 @@ import { getStatusTwoData } from '../lib/firebase/apis/firestore';
 import Card from '../components/Card'; // Card コンポーネントのインポート
 
 const ReadingPage = () => {
-    const [readingTasks, setReadingTasks] = useState<{ id: string; title: string; description: string; status: string; }[]>([]);
+    const [readingTasks, setReadingTasks] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
 
     useEffect(() => {
         const fetchReadingTasks = async () => {
@@ -14,7 +14,9 @@ const ReadingPage = () => {
                     id: task.id,
                     title: task.title,
                     description: task.description,
-                    status: task.status
+                    status: Number(task.status),
+                    author: task.author,  
+                    url: task.url 
                 }));
                 setReadingTasks(formattedData);
             } catch (error) {
@@ -40,7 +42,15 @@ const ReadingPage = () => {
                         readingTasks.map((task) => (
                             <li key={task.id}>
                                 {/* Card コンポーネントに必要なプロパティを渡す */}
-                                <Card id={task.id} title={task.title} description={task.description} status={task.status} />
+                                <Card
+                                    id={task.id}
+                                    title={task.title}
+                                    description={task.description}
+                                    status={task.status}
+                                    author={task.author}
+                                    url={task.url}
+                                    checked={task.status === 3} // ステータスが3であればチェック済みとする
+                                />
                             </li>
                         ))}
                 </ul>

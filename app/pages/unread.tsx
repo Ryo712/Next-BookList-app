@@ -6,7 +6,7 @@ import { db } from '../firebaseConfig';
 import Card from '../components/Card';
 
 const UnreadPage: React.FC = () => {
-  const [unreadTasks, setUnreadTasks] = useState<{ id: string; title: string; description: string; status: string }[]>([]);
+  const [unreadTasks, setUnreadTasks] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
 
   const fetchUnreadTasks = async () => {
     try {
@@ -15,7 +15,9 @@ const UnreadPage: React.FC = () => {
         id: task.id,
         title: task.title,
         description: task.description,
-        status: task.status
+        status: Number(task.status), // statusを数値型に変換
+        author: task.author,  
+        url: task.url         
       }));
       setUnreadTasks(formattedData);
     } catch (error) {
@@ -56,6 +58,8 @@ const UnreadPage: React.FC = () => {
                     title={task.title}
                     description={task.description}
                     status={task.status}
+                    author={task.author}  // author プロパティを渡す
+                    url={task.url}        // url プロパティを渡す
                     onCheckboxChange={() => handleCheckboxChange(task.id)} // チェックボックスの状態変更を検知する関数を渡す
                 />
 
