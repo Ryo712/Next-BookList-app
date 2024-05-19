@@ -4,8 +4,8 @@ import Card from '../components/Card';
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
-  const [items, setItems] = useState<{ id: number; title: string; description: string; status: string }[]>([]);
-  const [searchResult, setSearchResult] = useState<{ id: number; title: string; description: string; status: string } | null>(null);
+  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number }[]>([]);
+  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,19 +50,12 @@ const MyComponent = () => {
     }
   };
 
-  const handleSearch = async (result: { id: number; title: string; description: string; status: string } | null) => {
+  const handleSearch = async (result: { id: string; title: string; description: string; status: number; } | null) => {
     try {
       setSearchResult(result);
     } catch (error) {
       console.error('Error searching tasks:', error);
     }
-  };
-
-  const handleCardDelete = async () => {
-    // カードが削除された後に、再度データを取得して表示を更新する
-    const response = await fetch('/api/tasks');
-    const items = await response.json();
-    setItems(items);
   };
 
   return (
@@ -92,7 +85,6 @@ const MyComponent = () => {
               title={searchResult.title}
               description={searchResult.description}
               status={searchResult.status}
-              onDelete={handleCardDelete} // カードが削除されたときに再レンダリングを行う関数を渡す
             />
           ) : (
             items.map((task) => (
@@ -102,7 +94,6 @@ const MyComponent = () => {
                 title={task.title}
                 description={task.description}
                 status={task.status}
-                onDelete={handleCardDelete} // カードが削除されたときに再レンダリングを行う関数を渡す
               />
             ))
           )}
