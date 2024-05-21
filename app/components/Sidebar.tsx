@@ -6,7 +6,7 @@ import { collection, query, where, getDocs, DocumentData } from 'firebase/firest
 import { db } from '../firebaseConfig';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number } | null) => void;
+  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string } | null) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -21,8 +21,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const handleSearch = async () => {
     const q = query(collection(db, 'tasks'), where('title', '==', searchTerm));
     const querySnapshot = await getDocs(q);
-    const result = querySnapshot.docs.map(doc => doc.data()) as Array<{ id: string; title: string; description: string; status: number }>; // 型を修正
-    onSearchResult(result.length > 0 ? result[0] : null); // 修正
+    const result = querySnapshot.docs.map(doc => doc.data() as { id: string; title: string; description: string; status: number; author: string; });
+    const firstResult = result.length > 0 ? result[0] : null;
+    onSearchResult(firstResult);
   };
 
   return (

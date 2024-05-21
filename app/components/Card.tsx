@@ -1,19 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 type CardProps = {
   id: string;
   title: string;
   description: string;
   status: number;
+  author: string
 };
 
-const Card: React.FC<CardProps> = ({ id, title, description, status }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, status, author }) => {
   const router = useRouter();
+  const [isChecked, setIsChecked] = useState(status === 3);
 
   const handleCardClick = () => {
     router.push(`/cards/${id}`); // 詳細ページに遷移
   };
+
+  const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation(); // Prevent card click event
+    const newStatus = e.target.checked ? 3 : status;
+    setIsChecked(e.target.checked);
+
+    try {
+      const docRef = doc(db, 'tasks', id);
+      await updateDoc(docRef, { status: newStatus });
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
+  useEffect(() => {
+    setIsChecked(status === 3);
+  }, [status]);
 
   return (
     <div
@@ -28,6 +49,16 @@ const Card: React.FC<CardProps> = ({ id, title, description, status }) => {
           {description}
         </p>
         <p>Status: {status}</p>
+        <p>Author: {author}</p> {/* authorを表示 */}
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={handleCheckboxChange}
+            className="mr-2"
+          />
+          Mark as Done
+        </label>
       </div>
     </div>
   );
