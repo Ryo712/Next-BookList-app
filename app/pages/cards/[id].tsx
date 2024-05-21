@@ -9,7 +9,7 @@ const CardDetails: React.FC = () => {
 
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
-  const [editStatus, setEditStatus] = useState(0);
+  const [editStatus, setEditStatus] = useState('未読');
   const [editAuthor, setEditAuthor] = useState('');
   const [editUrl, setEditUrl] = useState('');
 
@@ -23,7 +23,7 @@ const CardDetails: React.FC = () => {
             const data = docSnap.data();
             setEditTitle(data.title || '');
             setEditDescription(data.description || '');
-            setEditStatus(data.status || 0);
+            setEditStatus(data.status || '未読');
             setEditAuthor(data.author || '');
             setEditUrl(data.url || '');
           } else {
@@ -37,22 +37,6 @@ const CardDetails: React.FC = () => {
 
     fetchData();
   }, [id]);
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditTitle(e.target.value);
-  };
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setEditDescription(e.target.value);
-  };
-
-  const handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditAuthor(e.target.value);
-  };
-
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditUrl(e.target.value);
-  };
 
   const handleSave = async () => {
     try {
@@ -80,24 +64,19 @@ const CardDetails: React.FC = () => {
     }
   };
 
-  const handleCheckboxChange = async () => {
-    const newStatus = editStatus === 1 ? 3 : 1;
-    setEditStatus(newStatus);
-  };
-
   if (!id) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="container mx-auto p-5" style={{ maxWidth: '800px', marginLeft: '250px' }}> {/* サイドバーの幅を考慮して中央寄せ */}
+    <div className="container mx-auto p-5" style={{ maxWidth: '800px', marginLeft: '250px' }}>
       <h1 className="text-3xl font-bold mb-5">Task Detail</h1>
       <div className="mb-5">
         <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Title</label>
         <input
           type="text"
           value={editTitle}
-          onChange={handleTitleChange}
+          onChange={(e) => setEditTitle(e.target.value)}
           className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
         />
       </div>
@@ -105,16 +84,27 @@ const CardDetails: React.FC = () => {
         <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Description</label>
         <textarea
           value={editDescription}
-          onChange={handleDescriptionChange}
+          onChange={(e) => setEditDescription(e.target.value)}
           className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
         />
+      </div>
+      <div className="mb-5">
+        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Status</label>
+        <select
+          value={editStatus}
+          onChange={(e) => setEditStatus(e.target.value)}
+          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
+        >
+          <option value="未読">未読</option>
+          <option value="読了">読了</option>
+        </select>
       </div>
       <div className="mb-5">
         <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Author</label>
         <input
           type="text"
           value={editAuthor}
-          onChange={handleAuthorChange}
+          onChange={(e) => setEditAuthor(e.target.value)}
           className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
         />
       </div>
@@ -123,13 +113,9 @@ const CardDetails: React.FC = () => {
         <input
           type="text"
           value={editUrl}
-          onChange={handleUrlChange}
+          onChange={(e) => setEditUrl(e.target.value)}
           className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
         />
-      </div>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Status</label>
-        <p>{editStatus}</p>
       </div>
       <button
         onClick={handleSave}

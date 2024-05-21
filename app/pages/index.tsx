@@ -4,8 +4,10 @@ import Card from '../components/Card';
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
-  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number }[]>([]);
-  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number } | null>(null);
+  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string }[]>([]);
+  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number; author: string } | null>(null);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +29,7 @@ const MyComponent = () => {
       title: { value: string };
       description: { value: string };
     };
-  
+
     try {
       const response = await fetch('/api/tasks', {
         method: 'POST',
@@ -50,13 +52,15 @@ const MyComponent = () => {
     }
   };
 
-  const handleSearch = async (result: { id: string; title: string; description: string; status: number; } | null) => {
+  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string } | null): Promise<void> => {
     try {
       setSearchResult(result);
     } catch (error) {
       console.error('Error searching tasks:', error);
     }
   };
+  
+  
 
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
@@ -85,6 +89,7 @@ const MyComponent = () => {
               title={searchResult.title}
               description={searchResult.description}
               status={searchResult.status}
+              author={searchResult.author} // ここを追加
             />
           ) : (
             items.map((task) => (
@@ -94,6 +99,7 @@ const MyComponent = () => {
                 title={task.title}
                 description={task.description}
                 status={task.status}
+                author={task.author} // ここを追加
               />
             ))
           )}
