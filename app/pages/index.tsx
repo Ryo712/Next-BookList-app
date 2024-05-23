@@ -89,7 +89,7 @@ const MyComponent = () => {
               title={searchResult.title}
               description={searchResult.description}
               status={searchResult.status}
-              author={searchResult.author} // ここを追加
+              author={searchResult.author} 
             />
           ) : (
             items.map((task) => (
@@ -99,7 +99,7 @@ const MyComponent = () => {
                 title={task.title}
                 description={task.description}
                 status={task.status}
-                author={task.author} // ここを追加
+                author={task.author} 
               />
             ))
           )}
