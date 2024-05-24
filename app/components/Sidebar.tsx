@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
     const firstResult = result.length > 0 ? result[0] : null;
     onSearchResult(firstResult);
   };
+  //tasksコレクションのドキュメントを検索し最初の結果をonSearchResultプロップスに渡す
 
   return (
     <aside className="sidebar flex-shrink-0 w-60 h-screen bg-white text-grey-800 flex flex-col shadow-2xl fixed left-0 top-0 bottom-0 z-10">
