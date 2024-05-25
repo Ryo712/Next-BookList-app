@@ -4,8 +4,8 @@ import Card from '../components/Card';
 
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
-  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string }[]>([]);
-  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number; author: string } | null>(null);
+  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
+  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string } | null>(null);
 
 
 
@@ -52,7 +52,7 @@ const MyComponent = () => {
     }
   };
 
-  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string } | null): Promise<void> => {
+  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string; url: string;  } | null): Promise<void> => {
     try {
       setSearchResult(result);
     } catch (error) {
@@ -90,6 +90,7 @@ const MyComponent = () => {
               description={searchResult.description}
               status={searchResult.status}
               author={searchResult.author} 
+              url={searchResult.url}
             />
           ) : (
             items.map((task) => (
@@ -100,6 +101,7 @@ const MyComponent = () => {
                 description={task.description}
                 status={task.status}
                 author={task.author} 
+                url={task.url}
               />
             ))
           )}
