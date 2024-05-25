@@ -8,10 +8,20 @@ type CardProps = {
   title: string;
   description: string;
   status: number;
-  author: string
+  author: string;
+  url: string;
+  onCheckboxChange?: (value: string) => void; // onCheckboxChangeプロパティを追加
 };
 
-const Card: React.FC<CardProps> = ({ id, title, description, status, author }) => {
+const Card: React.FC<CardProps> = ({
+  id,
+  title,
+  description,
+  status,
+  author,
+  url,
+  onCheckboxChange, // onCheckboxChangeプロパティを受け取る
+}) => {
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(status === 3);
 
@@ -23,10 +33,10 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, author }) =
     e.stopPropagation(); // Prevent card click event
     const newStatus = e.target.checked ? 3 : status;
     setIsChecked(e.target.checked);
-
     try {
       const docRef = doc(db, 'tasks', id);
       await updateDoc(docRef, { status: newStatus });
+      onCheckboxChange?.(id); // onCheckboxChangeプロパティを呼び出す
     } catch (error) {
       console.error('Error updating status:', error);
     }
@@ -49,7 +59,8 @@ const Card: React.FC<CardProps> = ({ id, title, description, status, author }) =
           {description}
         </p>
         <p>Status: {status}</p>
-        <p>Author: {author}</p> {/* authorを表示 */}
+        <p>Author: {author}</p>
+        <p>URL: {url}</p>
         <label className="flex items-center">
           <input
             type="checkbox"
