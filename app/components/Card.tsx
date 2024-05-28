@@ -44,7 +44,7 @@ const Card: React.FC<CardProps> = ({
 
   useEffect(() => {
     setIsChecked(status === 3);
-  }, [status]);
+  }, [status]); //statusが変更された時のみuseEffectの関数が実行される
 
   return (
     <div
