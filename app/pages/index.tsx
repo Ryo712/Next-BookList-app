@@ -91,6 +91,8 @@ const MyComponent = () => {
               status={searchResult.status}
               author={searchResult.author} 
               url={searchResult.url}
+              checked={searchResult.status === 3}
+              onCheckboxChange={() => console.log("Checkbox changed")}
             />
           ) : (
             items.map((task) => (
@@ -102,6 +104,8 @@ const MyComponent = () => {
                 status={task.status}
                 author={task.author} 
                 url={task.url}
+                checked={task.status === 3}
+                onCheckboxChange={() => console.log("Checkbox changed")}
               />
             ))
           )}
