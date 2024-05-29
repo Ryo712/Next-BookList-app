@@ -10,6 +10,7 @@ type CardProps = {
   status: number;
   author: string;
   url: string;
+  checked?: boolean;
   onCheckboxChange?: (value: string) => void; // onCheckboxChangeプロパティを追加
 };
 
