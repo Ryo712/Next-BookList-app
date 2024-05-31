@@ -61,7 +61,6 @@ const Card: React.FC<CardProps> = ({
         </p>
         <p>Status: {status}</p>
         <p>Author: {author}</p>
-        <p>URL: {url}</p>
         <label className="flex items-center">
           <input
             type="checkbox"
