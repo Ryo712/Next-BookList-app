@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig'; // FirebaseのFirestoreの初期化済みインスタンスをインポート
 
 // statusが1のデータを取得する関数
@@ -22,6 +22,7 @@ export const getStatusOneData = async () => {
     throw error;
   }
 };
+
 // statusが2のデータを取得する関数
 export const getStatusTwoData = async () => {
   try {
@@ -62,6 +63,17 @@ export const getStatusThreeData = async () => {
     return data;
   } catch (error) {
     console.error("Error getting documents: ", error);
+    throw error;
+  }
+};
+
+// タスクのステータスを更新する関数を追加
+export const updateTaskStatus = async (id: string, newStatus: number) => {
+  try {
+    const taskRef = doc(db, 'tasks', id);
+    await updateDoc(taskRef, { status: newStatus });
+  } catch (error) {
+    console.error('ステータスの更新に失敗しました:', error);
     throw error;
   }
 };
