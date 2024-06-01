@@ -11,7 +11,7 @@ type CardProps = {
   author: string;
   url: string;
   checked?: boolean;
-  onCheckboxChange?: (value: string) => void; // onCheckboxChangeプロパティを追加
+  onCheckboxChange?: (newStatus: number) => void; // onCheckboxChangeプロパティを追加
 };
 
 const Card: React.FC<CardProps> = ({
@@ -21,10 +21,11 @@ const Card: React.FC<CardProps> = ({
   status,
   author,
   url,
+  checked,
   onCheckboxChange, // onCheckboxChangeプロパティを受け取る
 }) => {
   const router = useRouter();
-  const [isChecked, setIsChecked] = useState(status === 3);
+  const [isChecked, setIsChecked] = useState(checked);
 
   const handleCardClick = () => {
     router.push(`/cards/${id}`); // 詳細ページに遷移
@@ -32,20 +33,20 @@ const Card: React.FC<CardProps> = ({
 
   const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation(); // Prevent card click event
-    const newStatus = e.target.checked ? 3 : status;
+    const newStatus = e.target.checked ? 3 : 2; // チェックを外すとステータス2に変更
     setIsChecked(e.target.checked);
     try {
       const docRef = doc(db, 'tasks', id);
       await updateDoc(docRef, { status: newStatus });
-      onCheckboxChange?.(id); // onCheckboxChangeプロパティを呼び出す
+      onCheckboxChange?.(newStatus); // onCheckboxChangeプロパティを呼び出す
     } catch (error) {
       console.error('Error updating status:', error);
     }
   };
 
   useEffect(() => {
-    setIsChecked(status === 3);
-  }, [status]); //statusが変更された時のみuseEffectの関数が実行される
+    setIsChecked(checked);
+  }, [checked]); // checkedが変更された時のみuseEffectの関数が実行される
 
   return (
     <div
