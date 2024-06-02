@@ -1,76 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import React from 'react';
 
-type CardProps = {
-  id: string;
-  title: string;
-  description: string;
-  status: number;
-  author: string;
-  url: string;
-  checked?: boolean;
-  onCheckboxChange?: (newStatus: number) => void; // onCheckboxChangeプロパティを追加
-};
-
-const Card: React.FC<CardProps> = ({
-  id,
-  title,
-  description,
-  status,
-  author,
-  url,
-  checked,
-  onCheckboxChange, // onCheckboxChangeプロパティを受け取る
-}) => {
-  const router = useRouter();
-  const [isChecked, setIsChecked] = useState(checked);
-
-  const handleCardClick = () => {
-    router.push(`/cards/${id}`); // 詳細ページに遷移
-  };
-
-  const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation(); // Prevent card click event
-    const newStatus = e.target.checked ? 3 : 2; // チェックを外すとステータス2に変更
-    setIsChecked(e.target.checked);
-    try {
-      const docRef = doc(db, 'tasks', id);
-      await updateDoc(docRef, { status: newStatus });
-      onCheckboxChange?.(newStatus); // onCheckboxChangeプロパティを呼び出す
-    } catch (error) {
-      console.error('Error updating status:', error);
-    }
-  };
-
-  useEffect(() => {
-    setIsChecked(checked);
-  }, [checked]); // checkedが変更された時のみuseEffectの関数が実行される
-
+const Card = () => {
   return (
-    <div
-      className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4 cursor-pointer"
-      onClick={handleCardClick}
-    >
-      <div className="p-5">
-        <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {title}
-        </h2>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-          {description}
-        </p>
-        <p>Status: {status}</p>
-        <p>Author: {author}</p>
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={handleCheckboxChange}
-            className="mr-2"
-          />
-          Mark as Done
-        </label>
+    <div className="flex-1 p-6">
+      <div className="relative mb-6">
+        <img
+          src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-ZqcV705IiqEeKO3U3m103x0t/user-WDNcSG8LmgWQjn5cbQzPzQJ0/img-4yLgZnLzHUupLqNNLoEnUPN0.png?st=2024-06-01T23%3A45%3A05Z&se=2024-06-02T01%3A45%3A05Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-06-01T23%3A49%3A04Z&ske=2024-06-02T23%3A49%3A04Z&sks=b&skv=2023-11-03&sig=PSbIqIh7yTWIKHVbRz1NHV0%2B8I5FczFk6rC2K%2BVHhRI%3D"
+          alt="Banner"
+          className="w-full h-40 object-cover"
+        />
+        <div className="absolute bottom-4 left-4 text-white">
+          <h1 className="text-3xl font-bold">
+            <i className="fas fa-book mr-2"></i>
+            Book List
+          </h1>
+          <p className="text-lg">
+            2023年に読みたい本やメディアをリストアップしましょう。完了したものを簡単に確認することができます。
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center space-x-4 text-gray-600">
+          <span>88 件</span>
+          <span>▼</span>
+          <span>未読</span>
+          <span>▼</span>
+          <span>読了</span>
+          <span>▼</span>
+          <span>進行中</span>
+          <span>▼</span>
+        </div>
+        <button className="px-4 py-2 bg-blue-500 text-white rounded">New</button>
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        {/* Book items */}
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="bg-white p-4 shadow-md">
+            <img
+              alt="Book cover"
+              className="w-full h-32 object-cover"
+              height="150"
+              src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-ZqcV705IiqEeKO3U3m103x0t/user-WDNcSG8LmgWQjn5cbQzPzQJ0/img-Aw6z07u70elYkpyKOTx8QZO1.png?st=2024-06-01T23%3A45%3A05Z&se=2024-06-02T01%3A45%3A05Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-06-01T23%3A49%3A04Z&ske=2024-06-02T23%3A49%3A04Z&sks=b&skv=2023-11-03&sig=HN8Rckuu9FurC8IxuKGL6UreFo8Q1WWosDCh4sLchBE%3D"
+              width="200"
+            />
+            <h2 className="mt-2 text-lg font-bold">Book Title</h2>
+            <p className="text-gray-600">Author Name</p>
+            <div className="mt-2 text-gray-600">
+              <i className="fas fa-check-square"></i>
+              読了
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
