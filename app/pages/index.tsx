@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
 
@@ -6,8 +7,6 @@ const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
   const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
   const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string } | null>(null);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,44 +22,13 @@ const MyComponent = () => {
     fetchData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      title: { value: string };
-      description: { value: string };
-    };
-
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: target.title.value,
-          description: target.description.value,
-        }),
-      });
-      if (response.ok) {
-        console.log('Task created successfully');
-        window.location.href = '/';
-      } else {
-        console.error('Failed to create task');
-      }
-    } catch (error) {
-      console.error('Error creating task:', error);
-    }
-  };
-
-  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string; url: string;  } | null): Promise<void> => {
+  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string; url: string; } | null): Promise<void> => {
     try {
       setSearchResult(result);
     } catch (error) {
       console.error('Error searching tasks:', error);
     }
   };
-  
-  
 
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
@@ -73,42 +41,24 @@ const MyComponent = () => {
       
       <Sidebar onSearchResult={handleSearch} />
       
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }} className="ml-60">
-        <input type="text" name="title" placeholder="タイトル" />
-        <input type="text" name="description" placeholder="説明" />
-        <button type="submit">作成</button>
-      </form>
-      
-      <div>
-        <h1>アイテム一覧</h1>
-        <div className="container mx-auto mt-10">
-          {searchResult ? (
-            <Card
-              key={searchResult.id}
-              id={searchResult.id}
-              title={searchResult.title}
-              description={searchResult.description}
-              status={searchResult.status}
-              author={searchResult.author} 
-              url={searchResult.url}
-              checked={searchResult.status === 3}
-              onCheckboxChange={() => console.log("Checkbox changed")}
-            />
-          ) : (
-            items.map((task) => (
-              <Card
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                status={task.status}
-                author={task.author} 
-                url={task.url}
-                checked={task.status === 3}
-                onCheckboxChange={() => console.log("Checkbox changed")}
-              />
-            ))
-          )}
+      <div className="ml-60 flex-1">
+        <div className="flex justify-end p-6">
+          <Link href="/new">
+            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              新しい本を追加する
+            </button>
+          </Link>
+        </div>
+        
+        <div>
+          <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
+          <div className="container mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {searchResult ? (
+              <Card books={[searchResult]} />
+            ) : (
+              <Card books={items} />
+            )}
+          </div>
         </div>
       </div>
     </div>

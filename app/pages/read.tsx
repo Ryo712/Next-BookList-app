@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getStatusThreeData, updateTaskStatus } from '../lib/firebase/apis/firestore'; // updateTaskStatus をインポート
+import { getStatusThreeData, updateTaskStatus } from '../lib/firebase/apis/firestore';
 import Card from '../components/Card';
 
 const ReadPage: React.FC = () => {
@@ -8,7 +8,7 @@ const ReadPage: React.FC = () => {
   useEffect(() => {
     const fetchReadTasks = async () => {
       try {
-        const data = await getStatusThreeData(); // ステータスが3のデータを取得
+        const data = await getStatusThreeData();
         const formattedData = data.map((task: any) => ({
           id: task.id,
           title: task.title,
@@ -25,7 +25,6 @@ const ReadPage: React.FC = () => {
 
     fetchReadTasks();
 
-    // クリーンアップ関数
     return () => {};
   }, []);
 
@@ -60,8 +59,8 @@ const ReadPage: React.FC = () => {
                   status={task.status}
                   author={task.author}
                   url={task.url}
-                  checked={task.status === 3} // 値を数値型に変換しその結果が数値の3と等しいかどうかを比較
-                  onCheckboxChange={(newStatus: number) => handleCheckboxChange(task.id, newStatus)} // 新しいプロパティを追加
+                  checked={task.status === 3}
+                  onCheckboxChange={(newStatus: number) => handleCheckboxChange(task.id, newStatus)}
                 />
               </li>
             ))}
