@@ -30,6 +30,14 @@ const MyComponent = () => {
     }
   };
 
+  const handleCheckboxChange = async (id: string, newStatus: number) => {
+    try {
+      // ステータスの更新ロジックをここに追加
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
   return (
     <div className="font-poppins antialiased h-full w-screen flex flex-row">
       <button
@@ -54,9 +62,9 @@ const MyComponent = () => {
           <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
           <div className="container mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {searchResult ? (
-              <Card books={[searchResult]} />
+              <Card books={[searchResult]} onCheckboxChange={handleCheckboxChange} />
             ) : (
-              <Card books={items} />
+              <Card books={items} onCheckboxChange={handleCheckboxChange} />
             )}
           </div>
         </div>
