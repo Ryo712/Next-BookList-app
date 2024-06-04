@@ -11,9 +11,15 @@ interface Book {
 
 interface CardProps {
   books: Book[];
+  onCheckboxChange: (id: string, newStatus: number) => void;
 }
 
-const Card: React.FC<CardProps> = ({ books }) => {
+const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
+  const handleChange = (id: string, checked: boolean) => {
+    const newStatus = checked ? 3 : 0; // 例として、チェックが入っていればステータス3（完了）に、外れていれば0（未完了）に設定
+    onCheckboxChange(id, newStatus);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -73,7 +79,12 @@ const Card: React.FC<CardProps> = ({ books }) => {
                   <h3 className="text-lg font-bold">{book.title}</h3>
                   <p className="text-gray-600">{book.author}</p>
                   <div className="flex items-center mt-2">
-                    <input checked className="mr-2" type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={book.status === 3}
+                      onChange={(e) => handleChange(book.id, e.target.checked)}
+                      className="mr-2"
+                    />
                     <span>読了</span>
                   </div>
                 </div>

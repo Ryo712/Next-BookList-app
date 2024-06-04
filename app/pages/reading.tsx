@@ -30,6 +30,14 @@ const ReadingPage = () => {
         return () => {};
     }, []);
 
+    const handleCheckboxChange = async (id: string, newStatus: number) => {
+        try {
+            // ステータスの更新ロジックをここに追加
+        } catch (error) {
+            console.error('ステータスの更新に失敗しました:', error);
+        }
+    };
+
     return (
         <div className="flex">
             <div className="w-1/4">
@@ -37,23 +45,7 @@ const ReadingPage = () => {
             </div>
             <div className="w-3/4">
                 <h1 className="text-3xl font-bold">Reading Books</h1>
-                <ul>
-                    {readingTasks.length > 0 &&
-                        readingTasks.map((task) => (
-                            <li key={task.id}>
-                                {/* Card コンポーネントに必要なプロパティを渡す */}
-                                <Card
-                                    id={task.id}
-                                    title={task.title}
-                                    description={task.description}
-                                    status={task.status}
-                                    author={task.author}
-                                    url={task.url}
-                                    checked={task.status === 3} // ステータスが3であればチェック済みとする
-                                />
-                            </li>
-                        ))}
-                </ul>
+                <Card books={readingTasks} onCheckboxChange={handleCheckboxChange} />
             </div>
         </div>
     );

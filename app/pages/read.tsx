@@ -48,23 +48,7 @@ const ReadPage: React.FC = () => {
       </div>
       <div className="w-3/4">
         <h1 className="text-3xl font-bold">Read Books</h1>
-        <ul>
-          {readTasks.length > 0 &&
-            readTasks.map((task) => (
-              <li key={task.id}>
-                <Card
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  status={task.status}
-                  author={task.author}
-                  url={task.url}
-                  checked={task.status === 3}
-                  onCheckboxChange={(newStatus: number) => handleCheckboxChange(task.id, newStatus)}
-                />
-              </li>
-            ))}
-        </ul>
+        <Card books={readTasks} onCheckboxChange={handleCheckboxChange} />
       </div>
     </div>
   );
