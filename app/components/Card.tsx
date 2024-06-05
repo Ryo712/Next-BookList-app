@@ -41,29 +41,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
           <p className="text-gray-600 mt-2">
             2023年に読みたい本やメディアをリストアップしましょう。完了したものを簡単に確認することができます。
           </p>
-          {/* Filters */}
-          <div className="flex items-center mt-4 space-x-4">
-            <button className="text-gray-500">
-              <i className="fas fa-th-large"></i>
-              すべて
-            </button>
-            <button className="text-gray-500">
-              <i className="fas fa-eye"></i>
-              未読
-            </button>
-            <button className="text-gray-500">
-              <i className="fas fa-book-open"></i>
-              読了
-            </button>
-            <button className="text-gray-500">
-              <i className="fas fa-book-reader"></i>
-              読中
-            </button>
-            <button className="text-gray-500">
-              <i className="fas fa-tasks"></i>
-              進行中
-            </button>
-          </div>
+          
           {/* Book List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
             {books.map((book: Book, index: number) => (
