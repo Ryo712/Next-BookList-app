@@ -1,3 +1,4 @@
+// Card.tsx
 import React from 'react';
 
 interface Book {
@@ -43,7 +44,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
           </p>
           
           {/* Book List */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
             {books.map((book: Book, index: number) => (
               <div key={index} className="bg-white shadow rounded-lg overflow-hidden">
                 <img

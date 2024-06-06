@@ -1,3 +1,4 @@
+// index.tsx
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
@@ -60,7 +61,7 @@ const MyComponent = () => {
         
         <div>
           <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
-          <div className="container mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="container mx-auto mt-10 max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {searchResult ? (
               <Card books={[searchResult]} onCheckboxChange={handleCheckboxChange} />
             ) : (
