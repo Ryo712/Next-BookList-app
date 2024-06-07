@@ -39,9 +39,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
             <i className="fas fa-book mr-2"></i>
             Book List
           </h2>
-          <p className="text-gray-600 mt-2">
-            2023年に読みたい本やメディアをリストアップしましょう。完了したものを簡単に確認することができます。
-          </p>
+          
           
           {/* Book List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
