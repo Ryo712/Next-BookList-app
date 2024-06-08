@@ -1,4 +1,3 @@
-// index.tsx
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
@@ -40,18 +39,13 @@ const MyComponent = () => {
   };
 
   return (
-    <div className="font-poppins antialiased h-full w-screen flex flex-row">
-      <button
-        onClick={() => setSidenav(true)}
-        className="..."
-      >
-        {/* ここにSVGアイコンなどのコンテンツを挿入 */}
-      </button>
+    <div className="flex h-screen">
+      <div className="w-1/4">
+        <Sidebar onSearchResult={handleSearch} />
+      </div>
       
-      <Sidebar onSearchResult={handleSearch} />
-      
-      <div className="ml-60 flex-1">
-        <div className="flex justify-end p-6">
+      <div className="w-3/4 p-6">
+        <div className="flex justify-end mb-4">
           <Link href="/new">
             <button className="px-4 py-2 bg-blue-500 text-white rounded">
               新しい本を追加する
@@ -59,15 +53,13 @@ const MyComponent = () => {
           </Link>
         </div>
         
-        <div>
-          <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
-          <div className="container mx-auto mt-10 max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {searchResult ? (
-              <Card books={[searchResult]} onCheckboxChange={handleCheckboxChange} />
-            ) : (
-              <Card books={items} onCheckboxChange={handleCheckboxChange} />
-            )}
-          </div>
+        <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {searchResult ? (
+            <Card books={[searchResult]} onCheckboxChange={handleCheckboxChange} />
+          ) : (
+            <Card books={items} onCheckboxChange={handleCheckboxChange} />
+          )}
         </div>
       </div>
     </div>

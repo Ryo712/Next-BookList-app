@@ -1,4 +1,3 @@
-// Card.tsx
 import React from 'react';
 
 interface Book {
@@ -39,12 +38,11 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
             <i className="fas fa-book mr-2"></i>
             Book List
           </h2>
-          
-          
+
           {/* Book List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
             {books.map((book: Book, index: number) => (
-              <div key={index} className="bg-white shadow rounded-lg overflow-hidden">
+              <div key={index} className="bg-white shadow rounded-lg overflow-hidden min-w-[250px]">
                 <img
                   alt="Book Cover"
                   className="w-full h-48 object-cover"
