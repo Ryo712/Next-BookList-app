@@ -1,4 +1,3 @@
-// unread.tsx
 import React, { useEffect, useState } from 'react';
 import { updateDoc, doc } from 'firebase/firestore';
 import { getStatusOneData } from '../lib/firebase/apis/firestore';
@@ -16,8 +15,8 @@ const UnreadPage: React.FC = () => {
         title: task.title,
         description: task.description,
         status: Number(task.status), // statusを数値型に変換
-        author: task.author,  
-        url: task.url         
+        author: task.author,
+        url: task.url
       }));
       setUnreadTasks(formattedData);
     } catch (error) {
@@ -30,11 +29,11 @@ const UnreadPage: React.FC = () => {
   }, []);
 
   // ステータスを更新する関数
-  const handleCheckboxChange = async (taskId: string) => {
+  const handleCheckboxChange = async (taskId: string, newStatus: number) => {
     try {
       // Firestore のドキュメントを更新
       const taskDocRef = doc(db, 'tasks', taskId);
-      await updateDoc(taskDocRef, { status: 3 }); // ステータスを3に変更
+      await updateDoc(taskDocRef, { status: newStatus }); // ステータスを更新
       fetchUnreadTasks(); // データを再取得
     } catch (error) {
       console.error('ステータスの更新に失敗しました:', error);
@@ -48,24 +47,7 @@ const UnreadPage: React.FC = () => {
       </div>
       <div className="w-3/4">
         <h1 className="text-3xl font-bold">Unread Books</h1>
-        <ul>
-          {unreadTasks.length > 0 &&
-            unreadTasks.map((task) => (
-              <li key={task.id}>
-                {/* Card コンポーネントに必要なプロパティを渡す */}
-                <Card
-                    id={task.id}
-                    title={task.title}
-                    description={task.description}
-                    status={task.status}
-                    author={task.author}  // author プロパティを渡す
-                    url={task.url}        // url プロパティを渡す
-                    onCheckboxChange={() => handleCheckboxChange(task.id)} // チェックボックスの状態変更を検知する関数を渡す
-                />
-
-              </li>
-            ))}
-        </ul>
+        <Card books={unreadTasks} onCheckboxChange={handleCheckboxChange} />
       </div>
     </div>
   );
