@@ -16,7 +16,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
   const handleChange = (id: string, checked: boolean) => {
-    const newStatus = checked ? 3 : 0; // 例として、チェックが入っていればステータス3（完了）に、外れていれば0（未完了）に設定
+    const newStatus = checked ? 3 : 2; // チェックが入っていればステータス3（完了）、外れていればステータス2に設定
     onCheckboxChange(id, newStatus);
   };
 
