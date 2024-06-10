@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 interface Book {
   id: string;
@@ -15,6 +16,12 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
+  const router = useRouter();
+
+  const handleCardClick = (id: string) => {
+    router.push(`/cards/${id}`);
+  };
+
   const handleChange = (id: string, checked: boolean) => {
     const newStatus = checked ? 3 : 2; // チェックが入っていればステータス3（完了）、外れていればステータス2に設定
     onCheckboxChange(id, newStatus);
@@ -42,7 +49,11 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
           {/* Book List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
             {books.map((book: Book, index: number) => (
-              <div key={index} className="bg-white shadow rounded-lg overflow-hidden min-w-[250px]">
+              <div
+                key={index}
+                className="bg-white shadow rounded-lg overflow-hidden min-w-[250px] cursor-pointer"
+                onClick={() => handleCardClick(book.id)}
+              >
                 <img
                   alt="Book Cover"
                   className="w-full h-48 object-cover"
@@ -57,7 +68,10 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
                     <input
                       type="checkbox"
                       checked={book.status === 3}
-                      onChange={(e) => handleChange(book.id, e.target.checked)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleChange(book.id, e.target.checked);
+                      }}
                       className="mr-2"
                     />
                     <span>読了</span>
