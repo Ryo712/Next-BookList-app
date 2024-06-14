@@ -48,7 +48,7 @@ const MyComponent = () => {
         <div className="flex justify-end mb-4">
           <Link href="/new">
             <button className="px-4 py-2 bg-blue-500 text-white rounded">
-              新しい本を追加する
+              New
             </button>
           </Link>
         </div>
