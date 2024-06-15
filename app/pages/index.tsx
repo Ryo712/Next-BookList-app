@@ -6,7 +6,7 @@ import Card from '../components/Card';
 const MyComponent = () => {
   const [sidenav, setSidenav] = useState(true);
   const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
-  const [searchResult, setSearchResult] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string } | null>(null);
+  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,12 +22,8 @@ const MyComponent = () => {
     fetchData();
   }, []);
 
-  const handleSearch = async (result: { id: string; title: string; description: string; status: number; author: string; url: string; } | null): Promise<void> => {
-    try {
-      setSearchResult(result);
-    } catch (error) {
-      console.error('Error searching tasks:', error);
-    }
+  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => {
+    setSearchResults(results);
   };
 
   const handleCheckboxChange = async (id: string, newStatus: number) => {
@@ -54,9 +50,9 @@ const MyComponent = () => {
         </div>
         
         <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {searchResult ? (
-            <Card books={[searchResult]} onCheckboxChange={handleCheckboxChange} />
+        <div className="w-full grid grid-cols-custom-layout gap-6">
+          {searchResults.length > 0 ? (
+            <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
           ) : (
             <Card books={items} onCheckboxChange={handleCheckboxChange} />
           )}
