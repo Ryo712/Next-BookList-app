@@ -6,7 +6,7 @@ import { collection, query, where, getDocs, DocumentData } from 'firebase/firest
 import { db } from '../firebaseConfig';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; } | null) => void;
+  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; }[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -19,9 +19,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = async () => {
-    const q = query(collection(db, 'tasks'), where('title', '==', searchTerm));
+    if (searchTerm.trim() === '') return; // 空の検索は無視
+    const q = query(collection(db, 'tasks'), where('title', '>=', searchTerm), where('title', '<=', searchTerm + '\uf8ff'));
     const querySnapshot = await getDocs(q);
-    const result = querySnapshot.docs.map(doc => ({
+    const results = querySnapshot.docs.map(doc => ({
       id: doc.id,
       title: doc.data().title,
       description: doc.data().description,
@@ -29,10 +30,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
       author: doc.data().author,
       url: doc.data().url, // urlプロパティを追加
     }));
-    const firstResult = result.length > 0 ? result[0] : null;
-    onSearchResult(firstResult);
+    onSearchResult(results);
   };
-  //tasksコレクションのドキュメントを検索し最初の結果をonSearchResultプロップスに渡す
 
   return (
     <aside className="sidebar flex-shrink-0 w-60 h-screen bg-white text-grey-800 flex flex-col shadow-2xl fixed left-0 top-0 bottom-0 z-10">
@@ -58,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
               <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
             </div>
           </div>
