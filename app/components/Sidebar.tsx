@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faBookOpen, faCheckDouble, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore'; // DocumentDataをインポート
+import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; }[]) => void;
+  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -20,7 +20,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
 
   const handleSearch = async () => {
     if (searchTerm.trim() === '') return; // 空の検索は無視
-    const q = query(collection(db, 'tasks'), where('title', '>=', searchTerm), where('title', '<=', searchTerm + '\uf8ff'));
+    const q = query(
+      collection(db, 'tasks'),
+      where('title', '>=', searchTerm),
+      where('title', '<=', searchTerm + '\uf8ff')
+    );
     const querySnapshot = await getDocs(q);
     const results = querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -28,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
       description: doc.data().description,
       status: doc.data().status,
       author: doc.data().author,
-      url: doc.data().url, // urlプロパティを追加
+      url: doc.data().url,
     }));
     onSearchResult(results);
   };
