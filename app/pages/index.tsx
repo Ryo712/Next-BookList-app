@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
 
 const MyComponent = () => {
-  const [sidenav, setSidenav] = useState(true);
   const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
   const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,12 @@ const MyComponent = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (router.query.searchResults) {
+      setSearchResults(JSON.parse(router.query.searchResults as string));
+    }
+  }, [router.query.searchResults]);
 
   const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => {
     setSearchResults(results);

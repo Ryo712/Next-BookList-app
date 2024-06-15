@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { getStatusThreeData, updateTaskStatus } from '../lib/firebase/apis/firestore';
 import Card from '../components/Card';
+import Sidebar from '../components/Sidebar';
 
 const ReadPage: React.FC = () => {
   const [readTasks, setReadTasks] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchReadTasks = async () => {
@@ -41,13 +44,20 @@ const ReadPage: React.FC = () => {
     }
   };
 
+  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => {
+    router.push({
+      pathname: '/',
+      query: { searchResults: JSON.stringify(results) }
+    });
+  };
+
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       <div className="w-1/4">
-        {/* サイドバーの内容をここに追加 */}
+        <Sidebar onSearchResult={handleSearch} />
       </div>
-      <div className="w-3/4">
-        <h1 className="text-3xl font-bold">Read Books</h1>
+      <div className="w-3/4 p-6">
+        <h1 className="text-3xl font-bold mb-4">Read Books</h1>
         <Card books={readTasks} onCheckboxChange={handleCheckboxChange} />
       </div>
     </div>
