@@ -56,7 +56,7 @@ const MyComponent = () => {
           </Link>
         </div>
         
-        <h1 className="text-2xl font-bold mb-4">アイテム一覧</h1>
+        <h1 className="text-2xl font-bold mb-4">All Books</h1>
         <div className="w-full grid grid-cols-custom-layout gap-6">
           {searchResults.length > 0 ? (
             <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
