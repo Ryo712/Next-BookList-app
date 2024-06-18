@@ -13,7 +13,8 @@ export const getStatusOneData = async () => {
       id: doc.id,
       title: doc.data().title,
       description: doc.data().description, // descriptionを追加
-      status: doc.data().status // statusを追加
+      status: doc.data().status, // statusを追加
+      author: doc.data().author
     }));
     
     return data;
@@ -36,6 +37,7 @@ export const getStatusTwoData = async () => {
       title: doc.data().title,
       description: doc.data().description,
       status: doc.data().status,
+      author: doc.data().author
     }));
     
     return data;
@@ -58,6 +60,7 @@ export const getStatusThreeData = async () => {
       title: doc.data().title,
       description: doc.data().description,
       status: doc.data().status,
+      author: doc.data().author
     }));
     
     return data;
