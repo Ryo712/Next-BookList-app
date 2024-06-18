@@ -12,6 +12,7 @@ const ReadingPage = () => {
     const fetchReadingTasks = async () => {
       try {
         const data = await getStatusTwoData();
+        console.log('取得データ:', data);
         const formattedData = data.map((task: any) => ({
           id: task.id,
           title: task.title,
