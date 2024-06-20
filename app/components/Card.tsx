@@ -54,7 +54,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
                   alt="Book Cover"
                   className="w-full h-48 object-cover"
                   height="200"
-                  src={book.url}
+                  src="/public/job_chocolatier_man.png"
                   width="300"
                 />
                 <div className="p-4">
