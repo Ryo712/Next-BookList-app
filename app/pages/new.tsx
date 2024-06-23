@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import storage from "../firebaseConfig"
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../firebaseConfig'; // 名前付きエクスポートとしてインポート
 
 const NewBook = () => {
-  const [newBook, setNewBook] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({ title: '', description: '', author: '', url: '', coverImage: null });
+  const [newBook, setNewBook] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
+    title: '',
+    description: '',
+    author: '',
+    url: '',
+    coverImage: null
+  });
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
 
@@ -29,18 +36,27 @@ const NewBook = () => {
 
   const handleAddBook = async () => {
     try {
-      const formData = new FormData();
-      formData.append('title', newBook.title);
-      formData.append('author', newBook.author);
-      formData.append('description', newBook.description);
-      formData.append('url', newBook.url);
+      let coverImageUrl = '';
       if (newBook.coverImage) {
-        formData.append('coverImage', newBook.coverImage);
+        const storageRef = ref(storage, `covers/${newBook.coverImage.name}`);
+        await uploadBytes(storageRef, newBook.coverImage);
+        coverImageUrl = await getDownloadURL(storageRef);
       }
+
+      const formData = {
+        title: newBook.title,
+        author: newBook.author,
+        description: newBook.description,
+        url: newBook.url,
+        coverImage: coverImageUrl,
+      };
 
       const res = await fetch('/api/tasks', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
       if (res.ok) {
@@ -56,14 +72,14 @@ const NewBook = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Add New Book</h2>
+        <h2 className="text-2xl font-bold mb-4">新しい本を追加する</h2>
         <div className="mb-4">
           <input
             type="text"
             name="title"
             value={newBook.title}
             onChange={handleInputChange}
-            placeholder="Title"
+            placeholder="タイトル"
             className="border p-2 w-full"
           />
         </div>
@@ -73,7 +89,7 @@ const NewBook = () => {
             name="author"
             value={newBook.author}
             onChange={handleInputChange}
-            placeholder="Author"
+            placeholder="著者"
             className="border p-2 w-full"
           />
         </div>
@@ -83,7 +99,7 @@ const NewBook = () => {
             name="description"
             value={newBook.description}
             onChange={handleInputChange}
-            placeholder="Description"
+            placeholder="説明"
             className="border p-2 w-full"
           />
         </div>
@@ -93,7 +109,7 @@ const NewBook = () => {
             name="url"
             value={newBook.url}
             onChange={handleInputChange}
-            placeholder="URL"
+            placeholder="画像URL"
             className="border p-2 w-full"
           />
         </div>
