@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
 const NewBook = () => {
-  const [newBook, setNewBook] = useState({ title: '', description: '', author: '', url: '' });
+  const [newBook, setNewBook] = useState({ title: '', description: '', author: '', url: '', coverImage: '' });
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,14 +33,14 @@ const NewBook = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">新しい本を追加する</h2>
+        <h2 className="text-2xl font-bold mb-4">Add New Book</h2>
         <div className="mb-4">
           <input
             type="text"
             name="title"
             value={newBook.title}
             onChange={handleInputChange}
-            placeholder="タイトル"
+            placeholder="title"
             className="border p-2 w-full"
           />
         </div>
@@ -50,7 +50,7 @@ const NewBook = () => {
             name="author"
             value={newBook.author}
             onChange={handleInputChange}
-            placeholder="著者"
+            placeholder="author"
             className="border p-2 w-full"
           />
         </div>
@@ -60,7 +60,7 @@ const NewBook = () => {
             name="description"
             value={newBook.description}
             onChange={handleInputChange}
-            placeholder="説明"
+            placeholder="description"
             className="border p-2 w-full"
           />
         </div>
@@ -70,7 +70,17 @@ const NewBook = () => {
             name="url"
             value={newBook.url}
             onChange={handleInputChange}
-            placeholder="画像URL"
+            placeholder="URL"
+            className="border p-2 w-full"
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            name="coverImage"
+            value={newBook.coverImage}
+            onChange={handleInputChange}
+            placeholder="image"
             className="border p-2 w-full"
           />
         </div>
