@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebaseConfig'; // 名前付きエクスポートとしてインポート
+import { storage } from '../firebaseConfig';
 
 const NewBook = () => {
   const [newBook, setNewBook] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
@@ -38,9 +38,18 @@ const NewBook = () => {
     try {
       let coverImageUrl = '';
       if (newBook.coverImage) {
+        console.log('Cover image:', newBook.coverImage);
+        console.log('Storage:', storage);
+
+        if (!storage) {
+          throw new Error('Firebase Storage is not initialized.');
+        }
+
         const storageRef = ref(storage, `covers/${newBook.coverImage.name}`);
+        console.log('Storage ref:', storageRef);
         await uploadBytes(storageRef, newBook.coverImage);
         coverImageUrl = await getDownloadURL(storageRef);
+        console.log('Cover image URL:', coverImageUrl);
       }
 
       const formData = {
@@ -62,10 +71,10 @@ const NewBook = () => {
       if (res.ok) {
         router.push('/');
       } else {
-        console.error('Failed to save data');
+        console.error('Failed to save data:', res.statusText);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error uploading cover image or saving data:', error);
     }
   };
 
