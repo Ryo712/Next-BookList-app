@@ -45,7 +45,7 @@ const NewBook = () => {
           throw new Error('Firebase Storage is not initialized.');
         }
 
-        const storageRef = ref(storage, `covers/${newBook.coverImage.name}`);
+        const storageRef = ref(storage, `images/${newBook.coverImage.name}`);
         console.log('Storage ref:', storageRef);
         await uploadBytes(storageRef, newBook.coverImage);
         coverImageUrl = await getDownloadURL(storageRef);
@@ -81,14 +81,14 @@ const NewBook = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">新しい本を追加する</h2>
+        <h2 className="text-2xl font-bold mb-4">Add New Book</h2>
         <div className="mb-4">
           <input
             type="text"
             name="title"
             value={newBook.title}
             onChange={handleInputChange}
-            placeholder="タイトル"
+            placeholder="Title"
             className="border p-2 w-full"
           />
         </div>
@@ -98,7 +98,7 @@ const NewBook = () => {
             name="author"
             value={newBook.author}
             onChange={handleInputChange}
-            placeholder="著者"
+            placeholder="Author"
             className="border p-2 w-full"
           />
         </div>
@@ -108,7 +108,7 @@ const NewBook = () => {
             name="description"
             value={newBook.description}
             onChange={handleInputChange}
-            placeholder="説明"
+            placeholder="Description"
             className="border p-2 w-full"
           />
         </div>
@@ -118,7 +118,7 @@ const NewBook = () => {
             name="url"
             value={newBook.url}
             onChange={handleInputChange}
-            placeholder="画像URL"
+            placeholder="URL"
             className="border p-2 w-full"
           />
         </div>
