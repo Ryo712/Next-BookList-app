@@ -22,15 +22,21 @@ const NewTask = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setNewTask({ ...newTask, coverImage: file });
-
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const fileType = file.type;
+      if (fileType === 'image/png' || fileType === 'image/jpeg' || fileType === 'image/jpg') {
+        setNewTask({ ...newTask, coverImage: file });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setNewTask({ ...newTask, coverImage: null });
+        setPreview(null);
+      }
     } else {
+      setNewTask({ ...newTask, coverImage: null });
       setPreview(null);
     }
   };
@@ -112,6 +118,7 @@ const NewTask = () => {
             name="coverImage"
             onChange={handleFileChange}
             className="border p-2 w-full"
+            accept=".png, .jpeg, .jpg"
           />
         </div>
         {preview && <img src={preview} alt="カバー画像のプレビュー" className="mb-4 w-full h-auto"/>}
