@@ -28,19 +28,10 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto">
         {/* Main Content */}
         <div className="p-6">
-          <div className="relative">
-            <img
-              alt="Books Banner"
-              className="w-full h-64 object-cover"
-              height="300"
-              src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-ZqcV705IiqEeKO3U3m103x0t/user-WDNcSG8LmgWQjn5cbQzPzQJ0/img-y08NV0KlfFMR9nS3F4da3eK9.png?st=2024-06-02T07%3A58%3A30Z&se=2024-06-02T09%3A58%3A30Z&sp=r&sv=2023-11-03&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-06-01T23%3A39%3A09Z&ske=2024-06-02T23%3A39%3A09Z&sks=b&skv=2023-11-03&sig=u1DR8cgMzBxk68m9wvFV1SrR5P4SuELN9PYska76V4U%3D"
-              width="1200"
-            />
-          </div>
+          
 
           {/* Book List */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
@@ -77,7 +68,6 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
             ))}
           </div>
         </div>
-      </div>
     </div>
   );
 };
