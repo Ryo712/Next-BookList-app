@@ -5,7 +5,15 @@ import Card from '../components/Card';
 import Sidebar from '../components/Sidebar';
 
 const ReadingPage = () => {
-  const [readingTasks, setReadingTasks] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
+  const [readingTasks, setReadingTasks] = useState<{
+    id: string;
+    title: string;
+    description: string;
+    status: number;
+    author: string;
+    url: string;
+    coverImage: string; // coverImageを追加
+  }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,7 +27,8 @@ const ReadingPage = () => {
           description: task.description,
           status: Number(task.status),
           author: task.author,
-          url: task.url
+          url: task.url,
+          coverImage: task.coverImage, // coverImageを追加
         }));
         setReadingTasks(formattedData);
       } catch (error) {
@@ -28,8 +37,6 @@ const ReadingPage = () => {
     };
 
     fetchReadingTasks();
-
-    return () => {};
   }, []);
 
   const handleCheckboxChange = async (id: string, newStatus: number) => {
@@ -40,10 +47,18 @@ const ReadingPage = () => {
     }
   };
 
-  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => {
+  const handleSearch = (results: {
+    id: string;
+    title: string;
+    description: string;
+    status: number;
+    author: string;
+    url: string;
+    coverImage: string; // coverImageを追加
+  }[]) => {
     router.push({
       pathname: '/',
-      query: { searchResults: JSON.stringify(results) }
+      query: { searchResults: JSON.stringify(results) },
     });
   };
 

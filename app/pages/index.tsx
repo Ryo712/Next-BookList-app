@@ -5,8 +5,8 @@ import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
 
 const MyComponent = () => {
-  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
-  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string }[]>([]);
+  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const MyComponent = () => {
     }
   }, [router.query.searchResults]);
 
-  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => {
+  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]) => {
     setSearchResults(results);
   };
 

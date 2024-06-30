@@ -6,7 +6,7 @@ import { collection, query, where, getDocs, DocumentData } from 'firebase/firest
 import { db } from '../firebaseConfig';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string }[]) => void;
+  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -33,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
       status: doc.data().status,
       author: doc.data().author,
       url: doc.data().url,
+      coverImage: doc.data().coverImage,
     }));
     onSearchResult(results);
   };
