@@ -1,66 +1,143 @@
-import React, { useState } from 'react'; 
-import { useRouter } from 'next/router'; 
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { signInWithEmail } from '../lib/firebase/apis/auth';
 
-export default function SignInScreen() {
-  const { handleSubmit, register } = useForm();
-  const [showPopup, setShowPopup] = useState(false);
-  const router = useRouter();
+const Logins: React.FC = () => {
+    const { handleSubmit, register } = useForm();
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const router = useRouter();
 
-  const onSubmit = handleSubmit(async ({ email, password }) => {
-    try {
-      const res = await signInWithEmail({ email, password });
-      if (res) {
-        console.log('ログイン成功');
-        setShowPopup(true);
-        router.push('/');
-      } else {
-        console.log('ログイン失敗');
-      }
-    } catch (error) {
-      console.error('ログインエラー:', error);
-    }
-  });
+    const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center w-full dark:bg-gray-950">
-      <div className="bg-white dark:bg-gray-900 shadow-[0_4px_6px_5px_rgba(0,0,0,0.1)] rounded-lg px-8 py-6 max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-4 dark:text-gray-200">Welcome Back!</h1>
-        <form onSubmit={onSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="your@email.com"
-              {...register('email')} // React Hook Form の register を使用してフォームフィールドと関連付ける
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
-            <input
-              type="password"
-              id="password"
-              className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Enter your password"
-              {...register('password')} // React Hook Form の register を使用してフォームフィールドと関連付ける
-              required
-            />
-            <a href="#" className="text-xs text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Forgot Password?</a>
-          </div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <input type="checkbox" id="remember" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 focus:outline-none" checked />
-              <label htmlFor="remember" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">Remember me</label>
+    const onSubmit = handleSubmit(async ({ email, password }) => {
+        try {
+            const res = await signInWithEmail({ email, password });
+            if (res) {
+                console.log('ログイン成功');
+                setShowPopup(true);
+                router.push('/');
+            } else {
+                console.log('ログイン失敗');
+            }
+        } catch (error) {
+            console.error('ログインエラー:', error);
+        }
+    });
+
+    return (
+        <div style={styles.container}>
+            <h1 style={styles.title}>Think it. Make it.</h1>
+            <h2 style={styles.subtitle}>Log in to your Book-List account</h2>
+            <form onSubmit={onSubmit} style={styles.form}>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label} htmlFor="email">Email</label>
+                    <input
+                        style={styles.input}
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email address..."
+                        {...register('email', { required: true })}
+                    />
+                </div>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label} htmlFor="password">Password</label>
+                    <input
+                        style={styles.input}
+                        type={passwordVisible ? "text" : "password"}
+                        id="password"
+                        placeholder="Enter your password..."
+                        {...register('password', { required: true })}
+                    />
+                    <img
+                        src={passwordVisible ? "https://img.icons8.com/ios-glyphs/30/000000/visible--v1.png" : "https://img.icons8.com/ios-glyphs/30/000000/invisible.png"}
+                        alt="toggle visibility"
+                        style={styles.togglePassword}
+                        onClick={togglePasswordVisibility}
+                    />
+                </div>
+                <button style={styles.loginButton} type="submit">Login</button>
+            </form>
+            <div style={styles.footer}>
+                Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.
             </div>
-            <a href="#" className="text-xs text-indigo-500 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create Account</a>
-          </div>
-          <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
-        </form>
-      </div>
-    </div>
-  );
-}
+        </div>
+    );
+};
+
+const styles = {
+    container: {
+        textAlign: 'center' as 'center',
+        width: '100%',
+        padding: '20px',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column' as 'column',
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        height: '100vh',
+    },
+    title: {
+        fontSize: '1.75rem',
+        fontWeight: 700,
+        marginBottom: '4px',
+    },
+    subtitle: {
+        fontSize: '1rem',
+        color: '#888',
+        fontWeight: 'normal' as 'normal',
+        marginTop: '0',
+        marginBottom: '20px',
+    },
+    form: {
+        width: '100%',
+        maxWidth: '400px',
+    },
+    inputGroup: {
+        textAlign: 'left' as 'left',
+        marginTop: '20px',
+        position: 'relative' as 'relative',
+    },
+    label: {
+        display: 'block',
+        marginBottom: '5px',
+        fontWeight: 600,
+    },
+    input: {
+        width: '100%',
+        padding: '12px 10px',
+        border: '1px solid #d1d5db',
+        borderRadius: '4px',
+        fontSize: '1rem',
+        boxSizing: 'border-box' as 'border-box',
+        marginBottom: '10px',
+    },
+    togglePassword: {
+        position: 'absolute' as 'absolute',
+        top: '36px',
+        right: '10px',
+        cursor: 'pointer' as 'pointer',
+    },
+    loginButton: {
+        backgroundColor: '#065fd4',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        padding: '12px',
+        fontSize: '1rem',
+        cursor: 'pointer' as 'pointer',
+        width: '100%',
+        marginTop: '20px',
+    },
+    footer: {
+        fontSize: '0.75rem',
+        color: '#888',
+        marginTop: '20px',
+        whiteSpace: 'pre-wrap' as 'pre-wrap',
+        textAlign: 'center' as 'center',
+        maxWidth: '400px',
+    }
+};
+
+export default Logins;
