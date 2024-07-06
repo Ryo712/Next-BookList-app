@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { useRouter } from 'next/router';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../firebaseConfig';
@@ -15,6 +15,8 @@ const NewsTask: React.FC = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isTitleEditing, setIsTitleEditing] = useState(false);
   const [isAuthorEditing, setIsAuthorEditing] = useState(false);
+  const [isURLEditing, setIsURLEditing] = useState(false);
+  const [isDescriptionEditing, setIsDescriptionEditing] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +60,7 @@ const NewsTask: React.FC = () => {
         description: newTask.description,
         url: newTask.url,
         coverImage: coverImageUrl,
-        status: 1,
+        status: 1, // ステータスの初期値を1に設定
       };
 
       // Firestoreのtasksコレクションにデータを追加
@@ -94,6 +96,30 @@ const NewsTask: React.FC = () => {
     setNewTask({ ...newTask, author: e.target.value });
   };
 
+  const handleURLClick = () => {
+    setIsURLEditing(true);
+  };
+
+  const handleURLBlur = () => {
+    setIsURLEditing(false);
+  };
+
+  const handleURLChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTask({ ...newTask, url: e.target.value });
+  };
+
+  const handleDescriptionClick = () => {
+    setIsDescriptionEditing(true);
+  };
+
+  const handleDescriptionBlur = () => {
+    setIsDescriptionEditing(false);
+  };
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTask({ ...newTask, description: e.target.value });
+  };
+
   return (
     <div style={styles.content}>
       <div style={styles.titleContainer}>
@@ -115,7 +141,7 @@ const NewsTask: React.FC = () => {
         )}
       </div>
       <div style={styles.property}>
-        <span>著者</span>
+        <span style={styles.label}>著者</span>
         {isAuthorEditing ? (
           <input
             type="text"
@@ -133,7 +159,7 @@ const NewsTask: React.FC = () => {
         )}
       </div>
       <div style={styles.property}>
-        <span>カバー画像</span>
+        <span style={styles.label}>カバー画像</span>
         <input
           type="file"
           name="coverImage"
@@ -144,26 +170,40 @@ const NewsTask: React.FC = () => {
       </div>
       {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
       <div style={styles.property}>
-        <span>URL</span>
-        <input
-          type="text"
-          name="url"
-          value={newTask.url}
-          onChange={handleInputChange}
-          placeholder="Enter URL"
-          style={styles.input}
-        />
+        <span style={styles.label}>URL</span>
+        {isURLEditing ? (
+          <input
+            type="text"
+            name="url"
+            value={newTask.url}
+            onChange={handleURLChange}
+            onBlur={handleURLBlur}
+            autoFocus
+            style={styles.inputEditing}
+          />
+        ) : (
+          <div style={newTask.url ? styles.valueFilled : styles.value} onClick={handleURLClick}>
+            {newTask.url || 'Empty'}
+          </div>
+        )}
       </div>
       <div style={styles.property}>
-        <span>説明</span>
-        <input
-          type="text"
-          name="description"
-          value={newTask.description}
-          onChange={handleInputChange}
-          placeholder="Enter Description"
-          style={styles.input}
-        />
+        <span style={styles.label}>説明</span>
+        {isDescriptionEditing ? (
+          <input
+            type="text"
+            name="description"
+            value={newTask.description}
+            onChange={handleDescriptionChange}
+            onBlur={handleDescriptionBlur}
+            autoFocus
+            style={styles.inputEditing}
+          />
+        ) : (
+          <div style={newTask.description ? styles.valueFilled : styles.value} onClick={handleDescriptionClick}>
+            {newTask.description || 'Empty'}
+          </div>
+        )}
       </div>
       <div style={styles.commentSection}>
         <input
@@ -180,7 +220,7 @@ const NewsTask: React.FC = () => {
   );
 };
 
-const styles = {
+const styles: { [key: string]: CSSProperties } = {
   content: {
     width: '80%',
     maxWidth: '800px',
@@ -208,6 +248,11 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '10px',
+    position: 'relative',
+  },
+  label: {
+    width: '100px', // ラベルの幅を固定
+    color: '#666',
   },
   input: {
     flex: 1,
@@ -228,11 +273,13 @@ const styles = {
     flex: 1,
     color: '#bbb',
     cursor: 'pointer',
+    marginLeft: '10px', // インプットと同じマージンを適用
   },
   valueFilled: {
     flex: 1,
     color: '#000',
     cursor: 'pointer',
+    marginLeft: '10px', // インプットと同じマージンを適用
   },
   commentSection: {
     marginTop: '20px',
