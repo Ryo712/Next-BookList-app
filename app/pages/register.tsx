@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { auth } from '../firebaseConfig';// Firebaseの設定ファイルからauthオブジェクトをインポート
-import { signUpWithEmail } from '../lib/firebase/apis/auth';
 import { useRouter } from 'next/router';
+import { signUpWithEmail } from '../lib/firebase/apis/auth';
 
-const Register = () => {
+const Registers: React.FC = () => {
   const { handleSubmit, register } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
@@ -16,109 +15,168 @@ const Register = () => {
         if (res) {
           console.log('新規登録成功');
           router.push('/');
-          // 登録成功したときにポップアップ表示を出す
         } else {
           console.log('新規登録失敗');
-          // 失敗した時もポップアップ表示
         }
       }
     );
   });
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
-
-  const toggleConfirmVisibility = () => {
-    setConfirmVisible(!confirmVisible);
+  const togglePasswordVisibility = (id: string) => {
+    if (id === 'password') {
+      setPasswordVisible(!passwordVisible);
+    } else if (id === 'confirmPassword') {
+      setConfirmVisible(!confirmVisible);
+    }
   };
 
   return (
-    <div className="h-screen bg-white flex justify-center items-center">
-      <div className="lg:w-96 md:w-1/2 w-2/3 flex flex-col justify-center items-center">
-        <form
-          onSubmit={onSubmit}
-          className="bg-white p-8 rounded-lg shadow-[0_4px_6px_5px_rgba(0,0,0,0.1)] max-w-md w-400"
-        >
-          <h1 className="text-center text-2xl mb-6 text-gray-600 font-bold font-sans">
-            Register
-          </h1>
-
-          <div>
-            <label
-              className="text-gray-800 font-semibold block my-3 text-md"
-              htmlFor="email"
-            >
-              Email
-            </label>
+    <div style={styles.body}>
+      <div style={styles.container}>
+        <h1 style={styles.title}>Think it. Make it.</h1>
+        <h2 style={styles.subtitle}>Create your Book-List account</h2>
+        <form onSubmit={onSubmit} style={styles.form}>
+          <div style={styles.inputGroup}>
+            <label htmlFor="email">Email</label>
             <input
-              className="w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none"
-              type="text"
+              type="email"
               id="email"
-              placeholder="@email"
+              placeholder="Enter your email address..."
               {...register('email')}
+              style={styles.input}
             />
           </div>
-          <div>
-            <label
-              className="text-gray-800 font-semibold block my-3 text-md"
-              htmlFor="password"
-            >
-              Password
-            </label>
+          <div style={styles.inputGroup}>
+            <label htmlFor="password">Password</label>
             <input
-              className="w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none"
               type={passwordVisible ? 'text' : 'password'}
               id="password"
-              placeholder="password"
+              placeholder="Enter your password..."
               {...register('password')}
+              style={styles.input}
             />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="focus:outline-none"
-            >
-              {passwordVisible ? 'Hide' : 'Show'}
-            </button>
+            <img
+              src={
+                passwordVisible
+                  ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
+                  : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
+              }
+              alt="toggle visibility"
+              style={styles.togglePassword}
+              onClick={() => togglePasswordVisibility('password')}
+            />
           </div>
-          <div>
-            <label
-              className="text-gray-800 font-semibold block my-3 text-md"
-              htmlFor="confirm"
-            >
-              Confirm password
-            </label>
+          <div style={styles.inputGroup}>
+            <label htmlFor="confirmPassword">Confirm Password</label>
             <input
-              className="w-full bg-gray-100 px-4 py-2 rounded-lg focus:outline-none"
               type={confirmVisible ? 'text' : 'password'}
-              name="confirm"
-              id="confirm"
-              placeholder="confirm password"
+              id="confirmPassword"
+              placeholder="Confirm your password..."
+              style={styles.input}
             />
-            <button
-              type="button"
-              onClick={toggleConfirmVisibility}
-              className="focus:outline-none"
-            >
-              {confirmVisible ? 'Hide' : 'Show'}
-            </button>
+            <img
+              src={
+                confirmVisible
+                  ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
+                  : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
+              }
+              alt="toggle visibility"
+              style={styles.togglePassword}
+              onClick={() => togglePasswordVisibility('confirmPassword')}
+            />
           </div>
-          <button
-            type="submit"
-            className="w-full mt-6 bg-indigo-600 rounded-lg px-4 py-2 text-lg text-white tracking-wide font-semibold font-sans"
-          >
-            Register
-          </button>
-          <button
-            type="submit"
-            className="w-full mt-6 mb-3 bg-indigo-100 rounded-lg px-4 py-2 text-lg text-gray-800 tracking-wide font-semibold font-sans"
-          >
-            Login
+          <button type="submit" style={styles.continueButton}>
+            Continue
           </button>
         </form>
+        <div style={styles.footer}>
+          Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to the{' '}
+          <a href="#" style={styles.footerLink}>
+            Terms & Conditions
+          </a>{' '}
+          and{' '}
+          <a href="#" style={styles.footerLink}>
+            Privacy Policy
+          </a>
+          .
+        </div>
       </div>
     </div>
   );
 };
 
-export default Register;
+const styles = {
+  body: {
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#fff',
+    margin: 0,
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    color: '#333',
+  },
+  container: {
+    textAlign: 'center' as const,
+    maxWidth: '400px',
+    width: '100%',
+    padding: '20px',
+  },
+  title: {
+    fontSize: '1.5rem',
+    marginBottom: '0',
+  },
+  subtitle: {
+    fontSize: '1rem',
+    color: '#888',
+    fontWeight: 'normal' as const,
+    marginTop: '5px',
+    marginBottom: '20px',
+  },
+  form: {
+    width: '100%',
+  },
+  inputGroup: {
+    textAlign: 'left' as const,
+    marginTop: '20px',
+    position: 'relative' as const,
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '1rem',
+    boxSizing: 'border-box' as const,
+    marginBottom: '10px',
+  },
+  togglePassword: {
+    position: 'absolute' as const,
+    top: '36px',
+    right: '10px',
+    cursor: 'pointer',
+  },
+  continueButton: {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '10px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    width: '100%',
+    marginTop: '20px',
+  },
+  footer: {
+    fontSize: '0.75rem',
+    color: '#888',
+    marginTop: '20px',
+  },
+  footerLink: {
+    color: '#007bff',
+    textDecoration: 'none' as const,
+  },
+};
+
+export default Registers;
