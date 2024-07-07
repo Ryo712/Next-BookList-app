@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
-const NewTask = () => {
+const NewsTask: React.FC = () => {
   const [newTask, setNewTask] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
     title: '',
     description: '',
@@ -13,6 +13,8 @@ const NewTask = () => {
     coverImage: null
   });
   const [preview, setPreview] = useState<string | null>(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,66 +70,174 @@ const NewTask = () => {
     }
   };
 
+  const handleAddFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Add New Task</h2>
-        <div className="mb-4">
+    <div style={styles.content}>
+      <div style={styles.titleContainer}>
+        {isEditingTitle ? (
           <input
             type="text"
-            name="title"
             value={newTask.title}
-            onChange={handleInputChange}
-            placeholder="Title"
-            className="border p-2 w-full"
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            onBlur={() => setIsEditingTitle(false)}
+            style={styles.titleInput}
+            autoFocus
           />
-        </div>
-        <div className="mb-4">
-          <input
-            type="text"
-            name="author"
-            value={newTask.author}
-            onChange={handleInputChange}
-            placeholder="Author"
-            className="border p-2 w-full"
-          />
-        </div>
-        <div className="mb-4">
-          <input
-            type="text"
-            name="description"
-            value={newTask.description}
-            onChange={handleInputChange}
-            placeholder="Description"
-            className="border p-2 w-full"
-          />
-        </div>
-        <div className="mb-4">
-          <input
-            type="text"
-            name="url"
-            value={newTask.url}
-            onChange={handleInputChange}
-            placeholder="URL"
-            className="border p-2 w-full"
-          />
-        </div>
-        <div className="mb-4">
+        ) : (
+          <div
+            style={{ ...styles.title, color: newTask.title ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingTitle(true)}
+          >
+            {newTask.title || 'Untitled'}
+          </div>
+        )}
+      </div>
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>著者</span>
+        <input
+          type="text"
+          name="author"
+          value={newTask.author}
+          onChange={handleInputChange}
+          placeholder="著者名を入力"
+          style={styles.input}
+        />
+      </div>
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>カバー画像</span>
+        <div style={styles.coverImageContainer}>
+          {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
+          <div style={styles.addFileContainer} onClick={handleAddFileClick}>
+            Add a file or image
+          </div>
           <input
             type="file"
             name="coverImage"
             onChange={handleFileChange}
-            className="border p-2 w-full"
             accept=".png, .jpeg, .jpg"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
           />
         </div>
-        {preview && <img src={preview} alt="カバー画像のプレビュー" className="mb-4 w-full h-auto"/>}
-        <button onClick={handleAddTask} className="bg-blue-500 text-white px-4 py-2 rounded">
-          追加
-        </button>
       </div>
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>URL</span>
+        <input
+          type="text"
+          name="url"
+          value={newTask.url}
+          onChange={handleInputChange}
+          placeholder="URLを入力"
+          style={styles.input}
+        />
+      </div>
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>説明</span>
+        <input
+          type="text"
+          name="description"
+          value={newTask.description}
+          onChange={handleInputChange}
+          placeholder="説明を入力"
+          style={styles.input}
+        />
+      </div>
+      
+      <div style={styles.footer}>
+        Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
+      </div>
+      <button style={styles.saveButton} onClick={handleAddTask}>
+        Save
+      </button>
     </div>
   );
 };
 
-export default NewTask;
+const styles: { [key: string]: React.CSSProperties } = {
+  content: {
+    width: '80%',
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#fff',
+  },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '20px',
+    width: '100%',
+  },
+  title: {
+    fontSize: '2rem',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%',
+  },
+  titleInput: {
+    fontSize: '2rem',
+    color: '#000',
+    border: 'none',
+    outline: 'none',
+    width: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  property: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  propertyLabel: {
+    minWidth: '100px',
+    color: '#666',
+  },
+  input: {
+    flex: 1,
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    marginLeft: '10px',
+  },
+  value: {
+    flex: 1,
+    color: '#000',
+    marginLeft: '10px',
+  },
+  coverImageContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  addFileContainer: {
+    marginLeft: '10px',
+    color: '#007bff',
+    cursor: 'pointer',
+  },
+  preview: {
+    width: '50px',
+    height: '50px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+  },
+  footer: {
+    color: '#666',
+    marginTop: '20px',
+  },
+  saveButton: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '20px',
+  },
+};
+
+export default NewsTask;
