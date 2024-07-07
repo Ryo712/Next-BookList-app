@@ -14,6 +14,9 @@ const NewsTask: React.FC = () => {
   });
   const [preview, setPreview] = useState<string | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingAuthor, setIsEditingAuthor] = useState(false);
+  const [isEditingURL, setIsEditingURL] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
@@ -97,14 +100,24 @@ const NewsTask: React.FC = () => {
       </div>
       <div style={styles.property}>
         <span style={styles.propertyLabel}>著者</span>
-        <input
-          type="text"
-          name="author"
-          value={newTask.author}
-          onChange={handleInputChange}
-          placeholder="著者名を入力"
-          style={styles.input}
-        />
+        {isEditingAuthor ? (
+          <input
+            type="text"
+            name="author"
+            value={newTask.author}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingAuthor(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: newTask.author ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingAuthor(true)}
+          >
+            {newTask.author || 'Empty'}
+          </div>
+        )}
       </div>
       <div style={styles.property}>
         <span style={styles.propertyLabel}>カバー画像</span>
@@ -125,27 +138,46 @@ const NewsTask: React.FC = () => {
       </div>
       <div style={styles.property}>
         <span style={styles.propertyLabel}>URL</span>
-        <input
-          type="text"
-          name="url"
-          value={newTask.url}
-          onChange={handleInputChange}
-          placeholder="URLを入力"
-          style={styles.input}
-        />
+        {isEditingURL ? (
+          <input
+            type="text"
+            name="url"
+            value={newTask.url}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingURL(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: newTask.url ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingURL(true)}
+          >
+            {newTask.url || 'Empty'}
+          </div>
+        )}
       </div>
       <div style={styles.property}>
         <span style={styles.propertyLabel}>説明</span>
-        <input
-          type="text"
-          name="description"
-          value={newTask.description}
-          onChange={handleInputChange}
-          placeholder="説明を入力"
-          style={styles.input}
-        />
+        {isEditingDescription ? (
+          <input
+            type="text"
+            name="description"
+            value={newTask.description}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingDescription(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: newTask.description ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingDescription(true)}
+          >
+            {newTask.description || 'Add a comment...'}
+          </div>
+        )}
       </div>
-      
       <div style={styles.footer}>
         Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
       </div>
@@ -208,6 +240,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     flex: 1,
     color: '#000',
     marginLeft: '10px',
+    cursor: 'pointer',
   },
   coverImageContainer: {
     display: 'flex',
@@ -223,6 +256,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '50px',
     objectFit: 'cover',
     borderRadius: '4px',
+    marginRight: '10px',
   },
   footer: {
     color: '#666',
