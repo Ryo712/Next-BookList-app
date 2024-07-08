@@ -124,8 +124,9 @@ const styles = {
     padding: '20px',
   },
   title: {
-    fontSize: '1.5rem',
-    marginBottom: '0',
+    fontSize: '1.75rem',
+    fontWeight: 700,
+    marginBottom: '4px',
   },
   subtitle: {
     fontSize: '1rem',
