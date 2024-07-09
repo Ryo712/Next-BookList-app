@@ -1,17 +1,29 @@
-import React, { useState, useEffect } from 'react';
+// [id].tsx
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage, db } from '../../firebaseConfig';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const CardDetails: React.FC = () => {
+const EditTask: React.FC = () => {
   const router = useRouter();
   const { id } = router.query; // URLからIDを取得
 
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editStatus, setEditStatus] = useState('未読');
-  const [editAuthor, setEditAuthor] = useState('');
-  const [editUrl, setEditUrl] = useState('');
+  const [editTask, setEditTask] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
+    title: '',
+    description: '',
+    author: '',
+    url: '',
+    coverImage: null
+  });
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingAuthor, setIsEditingAuthor] = useState(false);
+  const [isEditingURL, setIsEditingURL] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,11 +33,14 @@ const CardDetails: React.FC = () => {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setEditTitle(data.title || '');
-            setEditDescription(data.description || '');
-            setEditStatus(data.status || '未読');
-            setEditAuthor(data.author || '');
-            setEditUrl(data.url || '');
+            setEditTask({
+              title: data.title || '',
+              description: data.description || '',
+              author: data.author || '',
+              url: data.url || '',
+              coverImage: null // カバー画像は初期表示では設定しない
+            });
+            setPreview(data.coverImage || null); // プレビュー画像を設定
           } else {
             console.log('No such document!');
           }
@@ -38,99 +53,261 @@ const CardDetails: React.FC = () => {
     fetchData();
   }, [id]);
 
-  const handleSave = async () => {
-    try {
-      const docRef = doc(db, 'tasks', id as string);
-      await updateDoc(docRef, {
-        title: editTitle || '',
-        description: editDescription || '',
-        status: editStatus,
-        author: editAuthor || '',
-        url: editUrl || ''
-      });
-      // 更新が成功したら、必要に応じてメッセージを表示するか、リダイレクトするかなどの処理を追加
-    } catch (error) {
-      console.error('Error updating task:', error);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditTask({ ...editTask, [name]: value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      const fileType = file.type;
+      if (fileType === 'image/png' || fileType === 'image/jpeg' || fileType === 'image/jpg') {
+        setEditTask({ ...editTask, coverImage: file });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setEditTask({ ...editTask, coverImage: null });
+        setPreview(null);
+      }
+    } else {
+      setEditTask({ ...editTask, coverImage: null });
+      setPreview(null);
     }
   };
 
-  const handleDelete = async () => {
+  const handleSaveTask = async () => {
     try {
+      let coverImageUrl = preview;
+      if (editTask.coverImage) {
+        const storageRef = ref(storage, `images/${editTask.coverImage.name}`);
+        await uploadBytes(storageRef, editTask.coverImage);
+        coverImageUrl = await getDownloadURL(storageRef);
+      }
+
+      const formData = {
+        title: editTask.title,
+        author: editTask.author,
+        description: editTask.description,
+        url: editTask.url,
+        coverImage: coverImageUrl,
+        status: 1, // ステータスの初期値を1に設定
+      };
+
+      // Firestoreのtasksコレクションにデータを更新
       const docRef = doc(db, 'tasks', id as string);
-      await deleteDoc(docRef);
-      router.push('/'); // 削除後にホームページにリダイレクト（必要に応じて調整）
+      await updateDoc(docRef, formData);
+
+      toast.success('Task updated successfully!');
+      router.push('/');
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error('Error uploading cover image or saving data:', error);
+      toast.error('Failed to update task.');
     }
   };
 
-  if (!id) {
-    return <div>Loading...</div>;
-  }
+  const handleAddFileClick = () => {
+    fileInputRef.current?.click();
+  };
 
   return (
-    <div className="container mx-auto p-5" style={{ maxWidth: '800px', marginLeft: '250px' }}>
-      <h1 className="text-3xl font-bold mb-5">Task Detail</h1>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Title</label>
-        <input
-          type="text"
-          value={editTitle}
-          onChange={(e) => setEditTitle(e.target.value)}
-          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
-        />
+    <div style={styles.content}>
+      <div style={styles.titleContainer}>
+        {isEditingTitle ? (
+          <input
+            type="text"
+            value={editTask.title}
+            onChange={(e) => setEditTask({ ...editTask, title: e.target.value })}
+            onBlur={() => setIsEditingTitle(false)}
+            style={styles.titleInput}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.title, color: editTask.title ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingTitle(true)}
+          >
+            {editTask.title || 'Untitled'}
+          </div>
+        )}
       </div>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Description</label>
-        <textarea
-          value={editDescription}
-          onChange={(e) => setEditDescription(e.target.value)}
-          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
-        />
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>著者</span>
+        {isEditingAuthor ? (
+          <input
+            type="text"
+            name="author"
+            value={editTask.author}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingAuthor(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: editTask.author ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingAuthor(true)}
+          >
+            {editTask.author || 'Empty'}
+          </div>
+        )}
       </div>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Status</label>
-        <select
-          value={editStatus}
-          onChange={(e) => setEditStatus(e.target.value)}
-          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
-        >
-          <option value="未読">未読</option>
-          <option value="読了">読了</option>
-        </select>
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>カバー画像</span>
+        <div style={styles.coverImageContainer}>
+          {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
+          <div style={styles.addFileContainer} onClick={handleAddFileClick}>
+            Add a file or image
+          </div>
+          <input
+            type="file"
+            name="coverImage"
+            onChange={handleFileChange}
+            accept=".png, .jpeg, .jpg"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+          />
+        </div>
       </div>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">Author</label>
-        <input
-          type="text"
-          value={editAuthor}
-          onChange={(e) => setEditAuthor(e.target.value)}
-          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
-        />
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>URL</span>
+        {isEditingURL ? (
+          <input
+            type="text"
+            name="url"
+            value={editTask.url}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingURL(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: editTask.url ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingURL(true)}
+          >
+            {editTask.url || 'Empty'}
+          </div>
+        )}
       </div>
-      <div className="mb-5">
-        <label className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-400">URL</label>
-        <input
-          type="text"
-          value={editUrl}
-          onChange={(e) => setEditUrl(e.target.value)}
-          className="w-full border rounded py-2 px-3 text-gray-700 mb-3"
-        />
+      <div style={styles.property}>
+        <span style={styles.propertyLabel}>説明</span>
+        {isEditingDescription ? (
+          <input
+            type="text"
+            name="description"
+            value={editTask.description}
+            onChange={handleInputChange}
+            onBlur={() => setIsEditingDescription(false)}
+            style={styles.input}
+            autoFocus
+          />
+        ) : (
+          <div
+            style={{ ...styles.value, color: editTask.description ? '#000' : '#bbb' }}
+            onClick={() => setIsEditingDescription(true)}
+          >
+            {editTask.description || 'Add a comment...'}
+          </div>
+        )}
       </div>
-      <button
-        onClick={handleSave}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-      >
+      <div style={styles.footer}>
+        Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
+      </div>
+      <button style={styles.saveButton} onClick={handleSaveTask}>
         Save
-      </button>
-      <button
-        onClick={handleDelete}
-        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Delete
       </button>
     </div>
   );
 };
 
-export default CardDetails;
+const styles: { [key: string]: React.CSSProperties } = {
+  content: {
+    width: '80%',
+    maxWidth: '800px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#fff',
+  },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '20px',
+    width: '100%',
+  },
+  title: {
+    fontSize: '2rem',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%',
+  },
+  titleInput: {
+    fontSize: '2rem',
+    color: '#000',
+    border: 'none',
+    outline: 'none',
+    width: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  property: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  propertyLabel: {
+    minWidth: '100px',
+    color: '#666',
+  },
+  input: {
+    flex: 1,
+    padding: '10px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    marginLeft: '10px',
+  },
+  value: {
+    flex: 1,
+    color: '#000',
+    marginLeft: '10px',
+    cursor: 'pointer',
+  },
+  coverImageContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  addFileContainer: {
+    marginLeft: '10px',
+    color: '#007bff',
+    cursor: 'pointer',
+  },
+  preview: {
+    width: '50px',
+    height: '50px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+    marginRight: '10px',
+  },
+  footer: {
+    color: '#666',
+    marginTop: '20px',
+  },
+  saveButton: {
+    width: '100%',
+    padding: '10px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '20px',
+  },
+};
+
+export default EditTask;

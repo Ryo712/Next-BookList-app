@@ -9,13 +9,12 @@ import { app, getAuth, db } from '../firebaseConfig';
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [searchResults, setSearchResults] = useState<any[]>([]); // 検索結果の状態を追加
-  const hideSidebarPaths = ['/login', '/register', '/new'];
-  const showSidebar = !hideSidebarPaths.includes(router.pathname);
+  const hideSidebarPaths = ['/login', '/register', '/new', '/cards/[id]']; // 編集画面のパスを追加
+  const showSidebar = !hideSidebarPaths.some((path) => router.pathname.startsWith(path));
 
   // 検索結果を処理する関数
   const handleSearchResult = (results: any[]) => {
     setSearchResults(results);
-    
   };
 
   return (
