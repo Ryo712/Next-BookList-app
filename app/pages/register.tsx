@@ -2,24 +2,40 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { signUpWithEmail } from '../lib/firebase/apis/auth';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 const Registers: React.FC = () => {
   const { handleSubmit, register } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const router = useRouter();
+  const auth = getAuth();
 
   const onSubmit = handleSubmit(async (data) => {
-    signUpWithEmail({ email: data.email, password: data.password }).then(
-      (res) => {
-        if (res) {
-          console.log('新規登録成功');
-          router.push('/');
-        } else {
-          console.log('新規登録失敗');
-        }
-      }
-    );
+    if (data.password !== data.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+
+      // Firestoreにユーザー情報を保存
+      await setDoc(doc(db, 'users', user.uid), {
+        username: data.username,
+        email: data.email,
+        profileImage: '', // 初期値として空のプロフィール画像URL
+        createdAt: new Date(),
+      });
+
+      console.log('新規登録成功');
+      router.push('/');
+    } catch (error) {
+      console.log('新規登録失敗', error);
+    }
   });
 
   const togglePasswordVisibility = (id: string) => {
@@ -43,6 +59,16 @@ const Registers: React.FC = () => {
               id="email"
               placeholder="Enter your email address..."
               {...register('email')}
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter your username..."
+              {...register('username')}
               style={styles.input}
             />
           </div>
@@ -72,6 +98,7 @@ const Registers: React.FC = () => {
               type={confirmVisible ? 'text' : 'password'}
               id="confirmPassword"
               placeholder="Confirm your password..."
+              {...register('confirmPassword')}
               style={styles.input}
             />
             <img

@@ -1,36 +1,60 @@
-// pages/_app.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { AppProps } from 'next/app';
 import Sidebar from '../components/Sidebar';
 import { useRouter } from 'next/router';
 import 'tailwindcss/tailwind.css';
-import { app, getAuth, db } from '../firebaseConfig'; 
+import { app, db } from '../firebaseConfig';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+
+// ユーザーコンテキストの作成
+export const UserContext = createContext<any>(null);
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [searchResults, setSearchResults] = useState<any[]>([]); // 検索結果の状態を追加
-  const hideSidebarPaths = ['/login', '/register', '/new', '/cards/[id]']; // 編集画面のパスを追加
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const hideSidebarPaths = ['/login', '/register', '/new', '/cards/[id]', '/profile'];
   const showSidebar = !hideSidebarPaths.some((path) => router.pathname.startsWith(path));
 
-  // 検索結果を処理する関数
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUser({ ...user, ...userDoc.data() });
+        } else {
+          setUser(user); // Firestoreドキュメントが存在しない場合もセット
+        }
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const handleSearchResult = (results: any[]) => {
     setSearchResults(results);
   };
 
   return (
-    <div className="flex min-h-screen">
-      {showSidebar && <Sidebar onSearchResult={handleSearchResult} />}
-      <div className={`flex-1 flex flex-col ${!showSidebar ? 'w-full' : ''}`}>
-        {/* MyApp コンポーネント内で app、auth、db にアクセスできる */}
-        <Component 
-          {...pageProps} 
-          app={app} 
-          auth={getAuth} 
-          db={db} 
-          searchResults={searchResults} 
-        />
+    <UserContext.Provider value={user}>
+      <div className="flex min-h-screen">
+        {showSidebar && <Sidebar onSearchResult={handleSearchResult} />}
+        <div className={`flex-1 flex flex-col ${!showSidebar ? 'w-full' : ''}`}>
+          <Component 
+            {...pageProps} 
+            app={app} 
+            auth={getAuth} 
+            db={db} 
+            searchResults={searchResults} 
+          />
+        </div>
       </div>
-    </div>
+    </UserContext.Provider>
   );
 }
 
