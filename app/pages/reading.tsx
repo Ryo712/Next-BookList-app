@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { getStatusTwoData } from '../lib/firebase/apis/firestore';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from './_app';
 import Card from '../components/Card';
 import Sidebar from '../components/Sidebar';
 
 const ReadingPage = () => {
+  const user = useContext(UserContext);
   const [readingTasks, setReadingTasks] = useState<{
     id: string;
     title: string;
@@ -12,38 +15,48 @@ const ReadingPage = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchReadingTasks = async () => {
+  const fetchReadingTasks = async () => {
+    if (user) {
       try {
-        const data = await getStatusTwoData();
-        console.log('取得データ:', data);
-        const formattedData = data.map((task: any) => ({
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          status: Number(task.status),
-          author: task.author,
-          url: task.url,
-          coverImage: task.coverImage, // coverImageを追加
-        }));
-        setReadingTasks(formattedData);
+        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
+        const q = query(tasksCollection, where('status', '==', 2)); // ステータスが2のタスクを取得
+        const querySnapshot = await getDocs(q);
+        const tasksData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as {
+          id: string;
+          title: string;
+          description: string;
+          status: number;
+          author: string;
+          url: string;
+          coverImage: string;
+        }[];
+        setReadingTasks(tasksData);
       } catch (error) {
         console.error('データの取得に失敗しました:', error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchReadingTasks();
-  }, []);
+  }, [user]);
 
-  const handleCheckboxChange = async (id: string, newStatus: number) => {
-    try {
-      // ステータスの更新ロジックをここに追加
-    } catch (error) {
-      console.error('ステータスの更新に失敗しました:', error);
+  const handleCheckboxChange = async (taskId: string, newStatus: number) => {
+    if (user) {
+      try {
+        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        await updateDoc(taskDocRef, { status: newStatus });
+        fetchReadingTasks();
+      } catch (error) {
+        console.error('ステータスの更新に失敗しました:', error);
+      }
     }
   };
 
@@ -54,7 +67,7 @@ const ReadingPage = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]) => {
     router.push({
       pathname: '/',

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { getAuth } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
@@ -47,29 +48,36 @@ const NewsTask: React.FC = () => {
   };
 
   const handleAddTask = async () => {
-    try {
-      let coverImageUrl = '';
-      if (newTask.coverImage) {
-        const storageRef = ref(storage, `images/${newTask.coverImage.name}`);
-        await uploadBytes(storageRef, newTask.coverImage);
-        coverImageUrl = await getDownloadURL(storageRef);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      try {
+        let coverImageUrl = '';
+        if (newTask.coverImage) {
+          const storageRef = ref(storage, `images/${newTask.coverImage.name}`);
+          await uploadBytes(storageRef, newTask.coverImage);
+          coverImageUrl = await getDownloadURL(storageRef);
+        }
+
+        const formData = {
+          title: newTask.title,
+          author: newTask.author,
+          description: newTask.description,
+          url: newTask.url,
+          coverImage: coverImageUrl,
+          status: 1, // ステータスの初期値を1に設定
+        };
+
+        // Firestoreのユーザーサブコレクションにデータを追加
+        await addDoc(collection(db, 'users', user.uid, 'tasks'), formData);
+
+        router.push('/');
+      } catch (error) {
+        console.error('Error uploading cover image or saving data:', error);
       }
-
-      const formData = {
-        title: newTask.title,
-        author: newTask.author,
-        description: newTask.description,
-        url: newTask.url,
-        coverImage: coverImageUrl,
-        status: 1, // ステータスの初期値を1に設定
-      };
-
-      // Firestoreのtasksコレクションにデータを追加
-      await addDoc(collection(db, 'tasks'), formData);
-
-      router.push('/');
-    } catch (error) {
-      console.error('Error uploading cover image or saving data:', error);
+    } else {
+      console.error('User not authenticated');
     }
   };
 
