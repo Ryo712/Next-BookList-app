@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useRouter } from 'next/router';
-import { getStatusThreeData, updateTaskStatus } from '../lib/firebase/apis/firestore';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from './_app';
 import Card from '../components/Card';
 import Sidebar from '../components/Sidebar';
 
 const ReadPage: React.FC = () => {
+  const user = useContext(UserContext);
   const [readTasks, setReadTasks] = useState<{
     id: string;
     title: string;
@@ -12,42 +15,48 @@ const ReadPage: React.FC = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchReadTasks = async () => {
+  const fetchReadTasks = async () => {
+    if (user) {
       try {
-        const data = await getStatusThreeData();
-        const formattedData = data.map((task: any) => ({
-          id: task.id,
-          title: task.title,
-          description: task.description,
-          status: Number(task.status),
-          author: task.author,
-          url: task.url,
-          coverImage: task.coverImage, // coverImageを追加
-        }));
-        setReadTasks(formattedData);
+        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
+        const q = query(tasksCollection, where('status', '==', 3)); // ステータスが3のタスクを取得
+        const querySnapshot = await getDocs(q);
+        const tasksData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as {
+          id: string;
+          title: string;
+          description: string;
+          status: number;
+          author: string;
+          url: string;
+          coverImage: string;
+        }[];
+        setReadTasks(tasksData);
       } catch (error) {
         console.error('データの取得に失敗しました:', error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchReadTasks();
-  }, []);
+  }, [user]);
 
-  const handleCheckboxChange = async (id: string, newStatus: number) => {
-    try {
-      await updateTaskStatus(id, newStatus);
-      setReadTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === id ? { ...task, status: newStatus } : task
-        )
-      );
-    } catch (error) {
-      console.error('ステータスの更新に失敗しました:', error);
+  const handleCheckboxChange = async (taskId: string, newStatus: number) => {
+    if (user) {
+      try {
+        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        await updateDoc(taskDocRef, { status: newStatus });
+        fetchReadTasks();
+      } catch (error) {
+        console.error('ステータスの更新に失敗しました:', error);
+      }
     }
   };
 
@@ -58,7 +67,7 @@ const ReadPage: React.FC = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]) => {
     router.push({
       pathname: '/',

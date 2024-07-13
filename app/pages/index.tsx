@@ -1,27 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from './_app';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
 
 const MyComponent = () => {
+  const user = useContext(UserContext);
   const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
   const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch('/api/tasks?status=all');
-        const items = await response.json();
-        setItems(items);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      if (user) {
+        try {
+          const tasksCollection = collection(db, 'users', user.uid, 'tasks');
+          const q = query(tasksCollection);
+          const querySnapshot = await getDocs(q);
+
+          const tasksData = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as {
+            id: string;
+            title: string;
+            description: string;
+            status: number;
+            author: string;
+            url: string;
+            coverImage: string;
+          }[];
+
+          setItems(tasksData);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        }
       }
     };
 
     fetchData();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (router.query.searchResults) {

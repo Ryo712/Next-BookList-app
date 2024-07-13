@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { updateDoc, doc } from 'firebase/firestore';
-import { getStatusOneData } from '../lib/firebase/apis/firestore';
+import React, { useEffect, useState, useContext } from 'react';
+import { updateDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
 import { useRouter } from 'next/router';
+import { UserContext } from './_app';
 
 const UnreadPage: React.FC = () => {
+  const user = useContext(UserContext);
   const [unreadTasks, setUnreadTasks] = useState<{
     id: string;
     title: string;
@@ -14,39 +15,48 @@ const UnreadPage: React.FC = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]>([]);
   const router = useRouter();
 
   const fetchUnreadTasks = async () => {
-    try {
-      const data = await getStatusOneData();
-      const formattedData = data.map((task: any) => ({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        status: Number(task.status),
-        author: task.author,
-        url: task.url,
-        coverImage: task.coverImage, // coverImageを追加
-      }));
-      setUnreadTasks(formattedData);
-    } catch (error) {
-      console.error('データの取得に失敗しました:', error);
+    if (user) {
+      try {
+        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
+        const q = query(tasksCollection, where('status', '==', 1)); // ステータスが1のタスクを取得
+        const querySnapshot = await getDocs(q);
+        const tasksData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as {
+          id: string;
+          title: string;
+          description: string;
+          status: number;
+          author: string;
+          url: string;
+          coverImage: string;
+        }[];
+        setUnreadTasks(tasksData);
+      } catch (error) {
+        console.error('データの取得に失敗しました:', error);
+      }
     }
   };
 
   useEffect(() => {
     fetchUnreadTasks();
-  }, []);
+  }, [user]);
 
   const handleCheckboxChange = async (taskId: string, newStatus: number) => {
-    try {
-      const taskDocRef = doc(db, 'tasks', taskId);
-      await updateDoc(taskDocRef, { status: newStatus });
-      fetchUnreadTasks();
-    } catch (error) {
-      console.error('ステータスの更新に失敗しました:', error);
+    if (user) {
+      try {
+        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        await updateDoc(taskDocRef, { status: newStatus });
+        fetchUnreadTasks();
+      } catch (error) {
+        console.error('ステータスの更新に失敗しました:', error);
+      }
     }
   };
 
@@ -57,7 +67,7 @@ const UnreadPage: React.FC = () => {
     status: number;
     author: string;
     url: string;
-    coverImage: string; // coverImageを追加
+    coverImage: string;
   }[]) => {
     router.push({
       pathname: '/',
