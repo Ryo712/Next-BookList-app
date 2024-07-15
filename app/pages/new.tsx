@@ -86,124 +86,130 @@ const NewsTask: React.FC = () => {
   };
 
   return (
-    <div style={styles.content}>
-      <div style={styles.titleContainer}>
-        {isEditingTitle ? (
-          <input
-            type="text"
-            value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-            onBlur={() => setIsEditingTitle(false)}
-            style={styles.titleInput}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.title, color: newTask.title ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingTitle(true)}
-          >
-            {newTask.title || 'Untitled'}
-          </div>
-        )}
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>著者</span>
-        {isEditingAuthor ? (
-          <input
-            type="text"
-            name="author"
-            value={newTask.author}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingAuthor(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: newTask.author ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingAuthor(true)}
-          >
-            {newTask.author || 'Empty'}
-          </div>
-        )}
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>カバー画像</span>
-        <div style={styles.coverImageContainer}>
-          {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
-          <div style={styles.addFileContainer} onClick={handleAddFileClick}>
-            Add a file or image
-          </div>
-          <input
-            type="file"
-            name="coverImage"
-            onChange={handleFileChange}
-            accept=".png, .jpeg, .jpg"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-          />
+    <div style={styles.container}>
+      <div style={styles.content}>
+        <div style={styles.titleContainer}>
+          {isEditingTitle ? (
+            <input
+              type="text"
+              value={newTask.title}
+              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              onBlur={() => setIsEditingTitle(false)}
+              style={styles.titleInput}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.title, color: newTask.title ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {newTask.title || 'Untitled'}
+            </div>
+          )}
         </div>
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>URL</span>
-        {isEditingURL ? (
-          <input
-            type="text"
-            name="url"
-            value={newTask.url}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingURL(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: newTask.url ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingURL(true)}
-          >
-            {newTask.url || 'Empty'}
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>著者</span>
+          {isEditingAuthor ? (
+            <input
+              type="text"
+              name="author"
+              value={newTask.author}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingAuthor(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: newTask.author ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingAuthor(true)}
+            >
+              {newTask.author || 'Empty'}
+            </div>
+          )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>カバー画像</span>
+          <div style={styles.coverImageContainer}>
+            {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
+            <div style={styles.addFileContainer} onClick={handleAddFileClick}>
+              Add a file or image
+            </div>
+            <input
+              type="file"
+              name="coverImage"
+              onChange={handleFileChange}
+              accept=".png, .jpeg, .jpg"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+            />
           </div>
-        )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>URL</span>
+          {isEditingURL ? (
+            <input
+              type="text"
+              name="url"
+              value={newTask.url}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingURL(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: newTask.url ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingURL(true)}
+            >
+              {newTask.url || 'Empty'}
+            </div>
+          )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>説明</span>
+          {isEditingDescription ? (
+            <input
+              type="text"
+              name="description"
+              value={newTask.description}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingDescription(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: newTask.description ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingDescription(true)}
+            >
+              {newTask.description || 'Add a comment...'}
+            </div>
+          )}
+        </div>
+        
+        <button style={styles.saveButton} onClick={handleAddTask}>
+          Save
+        </button>
       </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>説明</span>
-        {isEditingDescription ? (
-          <input
-            type="text"
-            name="description"
-            value={newTask.description}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingDescription(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: newTask.description ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingDescription(true)}
-          >
-            {newTask.description || 'Add a comment...'}
-          </div>
-        )}
-      </div>
-      <div style={styles.footer}>
-        Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
-      </div>
-      <button style={styles.saveButton} onClick={handleAddTask}>
-        Save
-      </button>
     </div>
   );
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: '#f0f0f0',
+  },
   content: {
     width: '80%',
     maxWidth: '800px',
-    margin: '0 auto',
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   titleContainer: {
     display: 'flex',
@@ -217,6 +223,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
+    backgroundColor: '#f0f0f0',
   },
   titleInput: {
     fontSize: '2rem',
@@ -227,6 +234,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    backgroundColor: '#f0f0f0',
   },
   property: {
     display: 'flex',
