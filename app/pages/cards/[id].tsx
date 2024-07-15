@@ -1,4 +1,3 @@
-// [id].tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -114,124 +113,132 @@ const EditTask: React.FC = () => {
   };
 
   return (
-    <div style={styles.content}>
-      <div style={styles.titleContainer}>
-        {isEditingTitle ? (
-          <input
-            type="text"
-            value={editTask.title}
-            onChange={(e) => setEditTask({ ...editTask, title: e.target.value })}
-            onBlur={() => setIsEditingTitle(false)}
-            style={styles.titleInput}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.title, color: editTask.title ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingTitle(true)}
-          >
-            {editTask.title || 'Untitled'}
-          </div>
-        )}
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>著者</span>
-        {isEditingAuthor ? (
-          <input
-            type="text"
-            name="author"
-            value={editTask.author}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingAuthor(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: editTask.author ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingAuthor(true)}
-          >
-            {editTask.author || 'Empty'}
-          </div>
-        )}
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>カバー画像</span>
-        <div style={styles.coverImageContainer}>
-          {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
-          <div style={styles.addFileContainer} onClick={handleAddFileClick}>
-            Add a file or image
-          </div>
-          <input
-            type="file"
-            name="coverImage"
-            onChange={handleFileChange}
-            accept=".png, .jpeg, .jpg"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-          />
+    <div style={styles.container}>
+      <div style={styles.content}>
+        <div style={styles.titleContainer}>
+          {isEditingTitle ? (
+            <input
+              type="text"
+              value={editTask.title}
+              onChange={(e) => setEditTask({ ...editTask, title: e.target.value })}
+              onBlur={() => setIsEditingTitle(false)}
+              style={styles.titleInput}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.title, color: editTask.title ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingTitle(true)}
+            >
+              {editTask.title || 'Untitled'}
+            </div>
+          )}
         </div>
-      </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>URL</span>
-        {isEditingURL ? (
-          <input
-            type="text"
-            name="url"
-            value={editTask.url}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingURL(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: editTask.url ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingURL(true)}
-          >
-            {editTask.url || 'Empty'}
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>著者</span>
+          {isEditingAuthor ? (
+            <input
+              type="text"
+              name="author"
+              value={editTask.author}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingAuthor(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: editTask.author ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingAuthor(true)}
+            >
+              {editTask.author || 'Empty'}
+            </div>
+          )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>カバー画像</span>
+          <div style={styles.coverImageContainer}>
+            {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
+            <div style={styles.addFileContainer} onClick={handleAddFileClick}>
+              Add a file or image
+            </div>
+            <input
+              type="file"
+              name="coverImage"
+              onChange={handleFileChange}
+              accept=".png, .jpeg, .jpg"
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+            />
           </div>
-        )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>URL</span>
+          {isEditingURL ? (
+            <input
+              type="text"
+              name="url"
+              value={editTask.url}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingURL(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: editTask.url ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingURL(true)}
+            >
+              {editTask.url || 'Empty'}
+            </div>
+          )}
+        </div>
+        <div style={styles.property}>
+          <span style={styles.propertyLabel}>説明</span>
+          {isEditingDescription ? (
+            <input
+              type="text"
+              name="description"
+              value={editTask.description}
+              onChange={handleInputChange}
+              onBlur={() => setIsEditingDescription(false)}
+              style={styles.input}
+              autoFocus
+            />
+          ) : (
+            <div
+              style={{ ...styles.value, color: editTask.description ? '#000' : '#bbb' }}
+              onClick={() => setIsEditingDescription(true)}
+            >
+              {editTask.description || 'Add a comment...'}
+            </div>
+          )}
+        </div>
+        <div style={styles.footer}>
+          Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
+        </div>
+        <button style={styles.saveButton} onClick={handleSaveTask}>
+          Save
+        </button>
       </div>
-      <div style={styles.property}>
-        <span style={styles.propertyLabel}>説明</span>
-        {isEditingDescription ? (
-          <input
-            type="text"
-            name="description"
-            value={editTask.description}
-            onChange={handleInputChange}
-            onBlur={() => setIsEditingDescription(false)}
-            style={styles.input}
-            autoFocus
-          />
-        ) : (
-          <div
-            style={{ ...styles.value, color: editTask.description ? '#000' : '#bbb' }}
-            onClick={() => setIsEditingDescription(true)}
-          >
-            {editTask.description || 'Add a comment...'}
-          </div>
-        )}
-      </div>
-      <div style={styles.footer}>
-        Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
-      </div>
-      <button style={styles.saveButton} onClick={handleSaveTask}>
-        Save
-      </button>
     </div>
   );
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: '#f0f0f0',
+  },
   content: {
     width: '80%',
     maxWidth: '800px',
-    margin: '0 auto',
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
   },
   titleContainer: {
     display: 'flex',
@@ -245,6 +252,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
+    backgroundColor: '#f0f0f0',
   },
   titleInput: {
     fontSize: '2rem',
@@ -255,6 +263,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    backgroundColor: '#f0f0f0',
   },
   property: {
     display: 'flex',
