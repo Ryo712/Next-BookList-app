@@ -2,14 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, db } from '../../firebaseConfig';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 
 const EditTask: React.FC = () => {
   const router = useRouter();
-  const { id } = router.query; // URLからIDを取得
-
+  const { id } = router.query;
+  const [user, setUser] = useState<User | null>(null);
   const [editTask, setEditTask] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
     title: '',
     description: '',
@@ -25,32 +26,44 @@ const EditTask: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          const docRef = doc(db, 'tasks', id as string);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setEditTask({
-              title: data.title || '',
-              description: data.description || '',
-              author: data.author || '',
-              url: data.url || '',
-              coverImage: null // カバー画像は初期表示では設定しない
-            });
-            setPreview(data.coverImage || null); // プレビュー画像を設定
-          } else {
-            console.log('No such document!');
-          }
-        } catch (error) {
-          console.error('Error fetching task:', error);
-        }
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+        fetchData(user);
+      } else {
+        toast.error('User not authenticated');
+        router.push('/login');
       }
-    };
+    });
 
-    fetchData();
+    return () => unsubscribe();
   }, [id]);
+
+  const fetchData = async (user: User) => {
+    if (id) {
+      try {
+        const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setEditTask({
+            title: data.title || '',
+            description: data.description || '',
+            author: data.author || '',
+            url: data.url || '',
+            coverImage: null
+          });
+          setPreview(data.coverImage || null);
+        } else {
+          toast.error('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching task:', error);
+        toast.error('Failed to fetch task.');
+      }
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,6 +92,11 @@ const EditTask: React.FC = () => {
   };
 
   const handleSaveTask = async () => {
+    if (!user) {
+      toast.error('User not authenticated');
+      return;
+    }
+
     try {
       let coverImageUrl = preview;
       if (editTask.coverImage) {
@@ -93,11 +111,10 @@ const EditTask: React.FC = () => {
         description: editTask.description,
         url: editTask.url,
         coverImage: coverImageUrl,
-        status: 1, // ステータスの初期値を1に設定
+        status: 1,
       };
 
-      // Firestoreのtasksコレクションにデータを更新
-      const docRef = doc(db, 'tasks', id as string);
+      const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
       await updateDoc(docRef, formData);
 
       toast.success('Task updated successfully!');
@@ -105,6 +122,24 @@ const EditTask: React.FC = () => {
     } catch (error) {
       console.error('Error uploading cover image or saving data:', error);
       toast.error('Failed to update task.');
+    }
+  };
+
+  const handleDeleteTask = async () => {
+    if (!user) {
+      toast.error('User not authenticated');
+      return;
+    }
+
+    try {
+      const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
+      await deleteDoc(docRef);
+
+      toast.success('Task deleted successfully!');
+      router.push('/');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      toast.error('Failed to delete task.');
     }
   };
 
@@ -126,12 +161,12 @@ const EditTask: React.FC = () => {
               autoFocus
             />
           ) : (
-            <div
+            <h1
               style={{ ...styles.title, color: editTask.title ? '#000' : '#bbb' }}
               onClick={() => setIsEditingTitle(true)}
             >
               {editTask.title || 'Untitled'}
-            </div>
+            </h1>
           )}
         </div>
         <div style={styles.property}>
@@ -214,12 +249,15 @@ const EditTask: React.FC = () => {
             </div>
           )}
         </div>
-        <div style={styles.footer}>
-          Enterキーを押して空のページで続行するか、<a href="#">テンプレートを作成</a>してください。
+        
+        <div style={styles.buttonContainer}>
+          <button style={styles.saveButton} onClick={handleSaveTask}>
+            Save
+          </button>
+          <button style={styles.deleteButton} onClick={handleDeleteTask}>
+            Delete
+          </button>
         </div>
-        <button style={styles.saveButton} onClick={handleSaveTask}>
-          Save
-        </button>
       </div>
     </div>
   );
@@ -230,14 +268,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: '20px',
+    overflowY: 'auto',
+    backgroundColor: '#f7f8fa',
     height: '100vh',
-    backgroundColor: '#f0f0f0',
+    width: '100vw',
   },
   content: {
-    width: '80%',
+    width: '100%',
     maxWidth: '800px',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
+    padding: '40px',
+    fontFamily: 'sans-serif',
     backgroundColor: 'transparent',
   },
   titleContainer: {
@@ -247,32 +288,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '100%',
   },
   title: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    backgroundColor: '#f0f0f0',
+    borderBottom: '1px solid #ddd',
+    paddingBottom: '5px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
   },
   titleInput: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
     color: '#000',
     border: 'none',
     outline: 'none',
     width: '100%',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    backgroundColor: '#f0f0f0',
+    borderBottom: '1px solid #ddd',
+    paddingBottom: '5px',
+    backgroundColor: 'transparent',
   },
   property: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '10px',
+    marginBottom: '20px',
   },
   propertyLabel: {
-    minWidth: '100px',
-    color: '#666',
+    minWidth: '80px',
+    fontWeight: 'bold',
+    color: '#555',
   },
   input: {
     flex: 1,
@@ -297,8 +343,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
   },
   preview: {
-    width: '50px',
-    height: '50px',
+    width: '60px',
+    height: '60px',
     objectFit: 'cover',
     borderRadius: '4px',
     marginRight: '10px',
@@ -307,15 +353,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#666',
     marginTop: '20px',
   },
-  saveButton: {
-    width: '100%',
-    padding: '10px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end', 
+    gap: '10px', 
     marginTop: '20px',
+  },
+  saveButton: {
+    padding: '8px 16px',
+    backgroundColor: '#f5f5f5',
+    color: '#333',
+    border: '1px solid #ccc',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'background-color 0.3s',
+  },
+  saveButtonHover: {
+    backgroundColor: '#e0e0e0',
+  },
+  deleteButton: {
+    padding: '8px 16px',
+    backgroundColor: '#f5f5f5',
+    color: '#d32f2f',
+    border: '1px solid #ccc',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'background-color 0.3s',
+  },
+  deleteButtonHover: {
+    backgroundColor: '#e0e0e0',
   },
 };
 

@@ -99,12 +99,12 @@ const NewsTask: React.FC = () => {
               autoFocus
             />
           ) : (
-            <div
+            <h1
               style={{ ...styles.title, color: newTask.title ? '#000' : '#bbb' }}
               onClick={() => setIsEditingTitle(true)}
             >
               {newTask.title || 'Untitled'}
-            </div>
+            </h1>
           )}
         </div>
         <div style={styles.property}>
@@ -188,9 +188,14 @@ const NewsTask: React.FC = () => {
           )}
         </div>
         
-        <button style={styles.saveButton} onClick={handleAddTask}>
-          Save
-        </button>
+        <div style={styles.buttonContainer}>
+          <button
+            style={styles.saveButton}
+            onClick={handleAddTask}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -201,14 +206,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: '20px',
+    overflowY: 'auto',
+    backgroundColor: '#f7f8fa',
     height: '100vh',
-    backgroundColor: '#f0f0f0',
+    width: '100vw',
   },
   content: {
-    width: '80%',
+    width: '100%',
     maxWidth: '800px',
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
+    padding: '40px',
+    fontFamily: 'sans-serif',
     backgroundColor: 'transparent',
   },
   titleContainer: {
@@ -218,32 +226,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '100%',
   },
   title: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    backgroundColor: '#f0f0f0',
+    borderBottom: '1px solid #ddd',
+    paddingBottom: '5px',
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
   },
   titleInput: {
-    fontSize: '2rem',
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
     color: '#000',
     border: 'none',
     outline: 'none',
     width: '100%',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    backgroundColor: '#f0f0f0',
+    borderBottom: '1px solid #ddd',
+    paddingBottom: '5px',
+    backgroundColor: 'transparent',
   },
   property: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '10px',
+    marginBottom: '20px',
   },
   propertyLabel: {
-    minWidth: '100px',
-    color: '#666',
+    minWidth: '80px',
+    fontWeight: 'bold',
+    color: '#555',
   },
   input: {
     flex: 1,
@@ -268,8 +281,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
   },
   preview: {
-    width: '50px',
-    height: '50px',
+    width: '60px',
+    height: '60px',
     objectFit: 'cover',
     borderRadius: '4px',
     marginRight: '10px',
@@ -278,15 +291,27 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#666',
     marginTop: '20px',
   },
-  saveButton: {
-    width: '100%',
-    padding: '10px',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end', 
+    gap: '10px', 
     marginTop: '20px',
+  },
+  saveButton: {
+    padding: '8px 16px',
+    backgroundColor: '#f5f5f5',
+    color: '#333',
+    border: '1px solid #ccc',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    transition: 'background-color 0.3s',
+  },
+  saveButtonHover: {
+    backgroundColor: '#e0e0e0',
+  },
+  placeholder: {
+    color: '#bbb',
   },
 };
 
