@@ -48,132 +48,117 @@ const Registers: React.FC = () => {
 
   return (
     <div style={styles.body}>
-      <div style={styles.container}>
-        <h1 style={styles.title}>Think it. Make it.</h1>
-        <h2 style={styles.subtitle}>Create your Book-List account</h2>
-        <form onSubmit={onSubmit} style={styles.form}>
-          <div style={styles.inputGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Enter your email address..."
-              {...register('email')}
-              style={styles.input}
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              placeholder="Enter your username..."
-              {...register('username')}
-              style={styles.input}
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type={passwordVisible ? 'text' : 'password'}
-              id="password"
-              placeholder="Enter your password..."
-              {...register('password')}
-              style={styles.input}
-            />
-            <img
-              src={
-                passwordVisible
-                  ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
-                  : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
-              }
-              alt="toggle visibility"
-              style={styles.togglePassword}
-              onClick={() => togglePasswordVisibility('password')}
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type={confirmVisible ? 'text' : 'password'}
-              id="confirmPassword"
-              placeholder="Confirm your password..."
-              {...register('confirmPassword')}
-              style={styles.input}
-            />
-            <img
-              src={
-                confirmVisible
-                  ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
-                  : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
-              }
-              alt="toggle visibility"
-              style={styles.togglePassword}
-              onClick={() => togglePasswordVisibility('confirmPassword')}
-            />
-          </div>
-          <button type="submit" style={styles.continueButton}>
-            Continue
-          </button>
-        </form>
-        <div style={styles.footer}>
-          Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to the{' '}
-          <a href="#" style={styles.footerLink}>
-            Terms & Conditions
-          </a>{' '}
-          and{' '}
-          <a href="#" style={styles.footerLink}>
-            Privacy Policy
-          </a>
-          .
+      <h1 style={styles.title}>Think it. Make it.</h1>
+      <h2 style={styles.subtitle}>Create your Book-List account</h2>
+      <form onSubmit={onSubmit} style={styles.form}>
+        <div style={styles.inputGroup}>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email address..."
+            {...register('email')}
+            style={styles.input}
+          />
         </div>
-      </div>
+        <div style={styles.inputGroup}>
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter your username..."
+            {...register('username')}
+            style={styles.input}
+          />
+        </div>
+        <div style={styles.inputGroup}>
+          <label htmlFor="password">Password</label>
+          <input
+            type={passwordVisible ? 'text' : 'password'}
+            id="password"
+            placeholder="Enter your password..."
+            {...register('password')}
+            style={styles.input}
+          />
+          <img
+            src={
+              passwordVisible
+                ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
+                : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
+            }
+            alt="toggle visibility"
+            style={styles.togglePassword}
+            onClick={() => togglePasswordVisibility('password')}
+          />
+        </div>
+        <div style={styles.inputGroup}>
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type={confirmVisible ? 'text' : 'password'}
+            id="confirmPassword"
+            placeholder="Confirm your password..."
+            {...register('confirmPassword')}
+            style={styles.input}
+          />
+          <img
+            src={
+              confirmVisible
+                ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
+                : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
+            }
+            alt="toggle visibility"
+            style={styles.togglePassword}
+            onClick={() => togglePasswordVisibility('confirmPassword')}
+          />
+        </div>
+        <button type="submit" style={styles.continueButton}>
+          Continue
+        </button>
+      </form>
+      
     </div>
   );
 };
 
 const styles = {
   body: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Inter, Arial, sans-serif',
     backgroundColor: '#fff',
     margin: 0,
     padding: 0,
     display: 'flex',
+    flexDirection: 'column' as const,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
     color: '#333',
   },
-  container: {
-    textAlign: 'center' as const,
-    maxWidth: '400px',
-    width: '100%',
-    padding: '20px',
-  },
   title: {
     fontSize: '1.75rem',
     fontWeight: 700,
-    marginBottom: '4px',
+    marginBottom: '8px',
   },
   subtitle: {
     fontSize: '1rem',
-    color: '#888',
+    color: '#6c757d',
     fontWeight: 'normal' as const,
-    marginTop: '5px',
-    marginBottom: '20px',
+    marginTop: '0',
+    marginBottom: '24px',
   },
   form: {
     width: '100%',
+    maxWidth: '400px',
+    padding: '0 20px',
   },
   inputGroup: {
     textAlign: 'left' as const,
-    marginTop: '20px',
+    marginTop: '16px',
     position: 'relative' as const,
   },
   input: {
     width: '100%',
-    padding: '10px',
-    border: '1px solid #ddd',
+    padding: '12px',
+    border: '1px solid #ced4da',
     borderRadius: '4px',
     fontSize: '1rem',
     boxSizing: 'border-box' as const,
@@ -181,8 +166,9 @@ const styles = {
   },
   togglePassword: {
     position: 'absolute' as const,
-    top: '36px',
+    top: '50%',
     right: '10px',
+    transform: 'translateY(-50%)',
     cursor: 'pointer',
   },
   continueButton: {
@@ -190,7 +176,7 @@ const styles = {
     color: '#fff',
     border: 'none',
     borderRadius: '4px',
-    padding: '10px',
+    padding: '12px',
     fontSize: '1rem',
     cursor: 'pointer',
     width: '100%',
@@ -198,8 +184,11 @@ const styles = {
   },
   footer: {
     fontSize: '0.75rem',
-    color: '#888',
+    color: '#6c757d',
     marginTop: '20px',
+    textAlign: 'center' as const,
+    maxWidth: '400px',
+    padding: '0 20px',
   },
   footerLink: {
     color: '#007bff',

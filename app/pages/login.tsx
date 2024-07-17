@@ -59,9 +59,7 @@ const Logins: React.FC = () => {
                 </div>
                 <button style={styles.loginButton} type="submit">Login</button>
             </form>
-            <div style={styles.footer}>
-                Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.
-            </div>
+            
         </div>
     );
 };
