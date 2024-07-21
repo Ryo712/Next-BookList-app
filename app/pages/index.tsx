@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { UserContext } from './_app';
 import Sidebar from '../components/Sidebar';
@@ -17,8 +17,8 @@ const MyComponent = () => {
     const fetchData = async () => {
       if (user) {
         try {
-          const tasksCollection = collection(db, 'users', user.uid, 'tasks');
-          const q = query(tasksCollection);
+          const tasksCollection = collection(db, 'tasks');
+          const q = query(tasksCollection, where('userId', '==', user.uid));
           const querySnapshot = await getDocs(q);
 
           const tasksData = querySnapshot.docs.map((doc) => ({

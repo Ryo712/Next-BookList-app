@@ -22,8 +22,8 @@ const UnreadPage: React.FC = () => {
   const fetchUnreadTasks = async () => {
     if (user) {
       try {
-        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
-        const q = query(tasksCollection, where('status', '==', 1)); // ステータスが1のタスクを取得
+        const tasksCollection = collection(db, 'tasks');
+        const q = query(tasksCollection, where('userId', '==', user.uid), where('status', '==', 1)); // ステータスが1のタスクを取得
         const querySnapshot = await getDocs(q);
         const tasksData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -51,7 +51,7 @@ const UnreadPage: React.FC = () => {
   const handleCheckboxChange = async (taskId: string, newStatus: number) => {
     if (user) {
       try {
-        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
         fetchUnreadTasks();
       } catch (error) {

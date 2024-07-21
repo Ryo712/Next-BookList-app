@@ -6,7 +6,7 @@ import { UserContext } from './_app';
 import Card from '../components/Card';
 import Sidebar from '../components/Sidebar';
 
-const ReadingPage = () => {
+const ReadingPage: React.FC = () => {
   const user = useContext(UserContext);
   const [readingTasks, setReadingTasks] = useState<{
     id: string;
@@ -22,8 +22,8 @@ const ReadingPage = () => {
   const fetchReadingTasks = async () => {
     if (user) {
       try {
-        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
-        const q = query(tasksCollection, where('status', '==', 2)); // ステータスが2のタスクを取得
+        const tasksCollection = collection(db, 'tasks');
+        const q = query(tasksCollection, where('userId', '==', user.uid), where('status', '==', 2)); // ステータスが2のタスクを取得
         const querySnapshot = await getDocs(q);
         const tasksData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -51,7 +51,7 @@ const ReadingPage = () => {
   const handleCheckboxChange = async (taskId: string, newStatus: number) => {
     if (user) {
       try {
-        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
         fetchReadingTasks();
       } catch (error) {
@@ -82,7 +82,7 @@ const ReadingPage = () => {
       </div>
       <div className="w-3/4 p-6">
         <h1 className="text-3xl font-bold mb-4">Reading Books</h1>
-        <Card books={readingTasks} onCheckboxChange={handleCheckboxChange} />
+        <Card books={readingTasks} onCheckboxChange={(taskId) => handleCheckboxChange(taskId, 3)} /> {/* ステータス3に変更 */}
       </div>
     </div>
   );

@@ -43,7 +43,7 @@ const EditTask: React.FC = () => {
   const fetchData = async (user: User) => {
     if (id) {
       try {
-        const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
+        const docRef = doc(db, 'tasks', id as string);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -112,9 +112,10 @@ const EditTask: React.FC = () => {
         url: editTask.url,
         coverImage: coverImageUrl,
         status: 1,
+        updatedAt: new Date(),
       };
 
-      const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
+      const docRef = doc(db, 'tasks', id as string);
       await updateDoc(docRef, formData);
 
       toast.success('Task updated successfully!');
@@ -132,7 +133,7 @@ const EditTask: React.FC = () => {
     }
 
     try {
-      const docRef = doc(db, 'users', user.uid, 'tasks', id as string);
+      const docRef = doc(db, 'tasks', id as string);
       await deleteDoc(docRef);
 
       toast.success('Task deleted successfully!');
