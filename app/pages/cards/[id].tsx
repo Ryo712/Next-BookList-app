@@ -314,6 +314,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '20px',
+    minHeight: '40px',  // 高さを固定
   },
   propertyLabel: {
     minWidth: '80px',
@@ -326,12 +327,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: '1px solid #ddd',
     borderRadius: '4px',
     marginLeft: '10px',
+    height: '40px',  // 高さを固定
   },
   value: {
     flex: 1,
     color: '#000',
     marginLeft: '10px',
     cursor: 'pointer',
+    height: '40px',  // 高さを固定
+    display: 'flex',
+    alignItems: 'center',  // テキストを中央に配置
   },
   coverImageContainer: {
     display: 'flex',
