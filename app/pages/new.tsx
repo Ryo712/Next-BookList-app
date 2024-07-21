@@ -61,16 +61,19 @@ const NewsTask: React.FC = () => {
         }
 
         const formData = {
+          userId: user.uid,
           title: newTask.title,
           author: newTask.author,
           description: newTask.description,
           url: newTask.url,
           coverImage: coverImageUrl,
           status: 1, // ステータスの初期値を1に設定
+          createdAt: new Date(),
+          updatedAt: new Date()
         };
 
-        // Firestoreのユーザーサブコレクションにデータを追加
-        await addDoc(collection(db, 'users', user.uid, 'tasks'), formData);
+        // Firestoreのtasksコレクションにデータを追加
+        await addDoc(collection(db, 'tasks'), formData);
 
         router.push('/');
       } catch (error) {

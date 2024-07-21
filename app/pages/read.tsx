@@ -22,8 +22,8 @@ const ReadPage: React.FC = () => {
   const fetchReadTasks = async () => {
     if (user) {
       try {
-        const tasksCollection = collection(db, 'users', user.uid, 'tasks');
-        const q = query(tasksCollection, where('status', '==', 3)); // ステータスが3のタスクを取得
+        const tasksCollection = collection(db, 'tasks');
+        const q = query(tasksCollection, where('userId', '==', user.uid), where('status', '==', 3)); // ステータスが3のタスクを取得
         const querySnapshot = await getDocs(q);
         const tasksData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -51,7 +51,7 @@ const ReadPage: React.FC = () => {
   const handleCheckboxChange = async (taskId: string, newStatus: number) => {
     if (user) {
       try {
-        const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
+        const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
         fetchReadTasks();
       } catch (error) {
