@@ -8,12 +8,16 @@ import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 // ユーザーコンテキストの作成
-export const UserContext = createContext<any>(null);
+export interface UserContextType extends User {
+  username?: string;
+}
+
+export const UserContext = createContext<UserContextType | null>(null);
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserContextType | null>(null);
   const hideSidebarPaths = ['/login', '/register', '/new', '/cards/[id]', '/profile'];
   const showSidebar = !hideSidebarPaths.some((path) => router.pathname.startsWith(path));
 
@@ -24,9 +28,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          setUser({ ...user, ...userDoc.data() });
+          const userData = userDoc.data();
+          setUser({ ...user, username: userData?.username } as UserContextType);
         } else {
-          setUser(user); // Firestoreドキュメントが存在しない場合もセット
+          setUser(user as UserContextType); // Firestoreドキュメントが存在しない場合もセット
         }
       } else {
         setUser(null);
