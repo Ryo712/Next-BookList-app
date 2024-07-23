@@ -30,7 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          setProfileImageURL(userData?.profileImageURL || null);
+          setProfileImageURL(userData?.profileImage || null); // 'profileImageURL' から 'profileImage' へ修正
         }
       }
     };
@@ -76,7 +76,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
               alt="User profile"
             />
           ) : (
-            <div>No Profile Image</div>
+            <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-700">
+              No Image
+            </div>
           )}
           <div className="text-center mt-4 mb-4">
             <p className="text-sm font-semibold text-gray-800">{user?.username || 'No Name'}</p>
