@@ -15,12 +15,10 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
-        console.log('User context:', user);
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            console.log('Fetched user data:', userData);
             setUsername(userData.username);
             setEmail(userData.email);
             setProfileImage(userData.profileImage);
@@ -112,7 +110,7 @@ const Profile: React.FC = () => {
       <div>
         <label>Profile Image:</label>
         {profileImage ? (
-          <img src={profileImage} alt="Profile" />
+          <img src={profileImage} alt="Profile" style={{ width: '100px', height: '100px' }} />
         ) : (
           <p>No profile image set</p>
         )}
