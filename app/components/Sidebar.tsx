@@ -2,10 +2,11 @@ import React, { useState, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faBookOpen, faCheckDouble, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db, getAuth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
+import LogoutModal from './LogoutModal';
 
 interface SidebarProps {
   onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]) => void;
@@ -21,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const user = useContext(UserContext) as UserContextType | null;
   const [profileImageURL, setProfileImageURL] = useState<string | null>(null);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          setProfileImageURL(userData?.profileImage || null); // 'profileImageURL' から 'profileImage' へ修正
+          setProfileImageURL(userData?.profileImage || null);
         }
       }
     };
@@ -60,6 +62,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
 
   const handleProfileClick = () => {
     router.push('/profile');
+  };
+
+  const handleLogout = () => {
+    const auth = getAuth();
+    auth.signOut().then(() => {
+      router.push('/login');
+    });
   };
 
   return (
@@ -117,10 +126,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             </Link>
           ))}
         </nav>
+        <div className="mt-6">
+          <button
+            className="w-full flex items-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
+            onClick={() => setIsLogoutModalOpen(true)}
+          >
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-3" />
+            Log out
+          </button>
+        </div>
       </div>
       <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
         This is a Dashboard Sidebar Navigation by pantazisoftware.
       </footer>
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onLogout={handleLogout}
+      />
     </aside>
   );
 };
