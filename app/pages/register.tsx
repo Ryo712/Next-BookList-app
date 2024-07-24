@@ -5,6 +5,8 @@ import { signUpWithEmail } from '../lib/firebase/apis/auth';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Registers: React.FC = () => {
   const { handleSubmit, register } = useForm();
@@ -80,13 +82,8 @@ const Registers: React.FC = () => {
             {...register('password')}
             style={styles.input}
           />
-          <img
-            src={
-              passwordVisible
-                ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
-                : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
-            }
-            alt="toggle visibility"
+          <FontAwesomeIcon
+            icon={passwordVisible ? faEye : faEyeSlash}
             style={styles.togglePassword}
             onClick={() => togglePasswordVisibility('password')}
           />
@@ -100,13 +97,8 @@ const Registers: React.FC = () => {
             {...register('confirmPassword')}
             style={styles.input}
           />
-          <img
-            src={
-              confirmVisible
-                ? 'https://img.icons8.com/ios-filled/16/000000/visible.png'
-                : 'https://img.icons8.com/ios-filled/16/000000/invisible.png'
-            }
-            alt="toggle visibility"
+          <FontAwesomeIcon
+            icon={confirmVisible ? faEye : faEyeSlash}
             style={styles.togglePassword}
             onClick={() => togglePasswordVisibility('confirmPassword')}
           />
@@ -115,7 +107,6 @@ const Registers: React.FC = () => {
           Continue
         </button>
       </form>
-      
     </div>
   );
 };
@@ -168,7 +159,7 @@ const styles = {
     position: 'absolute' as const,
     top: '50%',
     right: '10px',
-    transform: 'translateY(-50%)',
+    transform: 'translateY(20%)',
     cursor: 'pointer',
   },
   continueButton: {
