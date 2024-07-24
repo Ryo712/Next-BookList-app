@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { signInWithEmail } from '../lib/firebase/apis/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Logins: React.FC = () => {
     const { handleSubmit, register } = useForm();
@@ -50,16 +52,14 @@ const Logins: React.FC = () => {
                         placeholder="Enter your password..."
                         {...register('password', { required: true })}
                     />
-                    <img
-                        src={passwordVisible ? "https://img.icons8.com/ios-glyphs/30/000000/visible--v1.png" : "https://img.icons8.com/ios-glyphs/30/000000/invisible.png"}
-                        alt="toggle visibility"
+                    <FontAwesomeIcon
+                        icon={passwordVisible ? faEye : faEyeSlash}
                         style={styles.togglePassword}
                         onClick={togglePasswordVisibility}
                     />
                 </div>
                 <button style={styles.loginButton} type="submit">Login</button>
             </form>
-            
         </div>
     );
 };
@@ -113,8 +113,9 @@ const styles = {
     },
     togglePassword: {
         position: 'absolute' as 'absolute',
-        top: '36px',
+        top: '50%',
         right: '10px',
+        transform: 'translateY(20%)',
         cursor: 'pointer' as 'pointer',
     },
     loginButton: {
