@@ -107,12 +107,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
           </div>
         </div>
         <div className="w-full text-center mb-6">
-          <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md transition duration-300 hover:bg-blue-600"
-          >
-            Search
-          </button>
+        <button
+  onClick={handleSearch}
+  className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
+  style={{ width: 'auto' }}
+>
+  Search
+</button>
+
+
         </div>
         <nav className="flex flex-col mt-2">
           {navigation.map((item) => (
