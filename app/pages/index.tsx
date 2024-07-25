@@ -64,11 +64,11 @@ const MyComponent = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/4">
+      <div className="w-1/6">
         <Sidebar onSearchResult={handleSearch} />
       </div>
       
-      <div className="w-3/4 p-6">
+      <div className="w-5/6 p-6">
         <div className="flex justify-end mb-4">
           <Link href="/new">
             <button className="px-4 py-2 bg-blue-500 text-white rounded">
@@ -78,7 +78,7 @@ const MyComponent = () => {
         </div>
         
         <h1 className="text-2xl font-bold mb-4">All Books</h1>
-        <div className="w-full grid grid-cols-custom-layout gap-6">
+        <div className="w-full grid grid-cols-custom-layout gap-8">
           {searchResults.length > 0 ? (
             <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
           ) : (
