@@ -77,7 +77,7 @@ const ReadPage: React.FC = () => {
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/4">
+      <div className="w-1/6">
         <Sidebar onSearchResult={handleSearch} />
       </div>
       <div className="w-3/4 p-6">
