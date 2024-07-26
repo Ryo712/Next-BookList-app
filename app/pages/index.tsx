@@ -70,7 +70,7 @@ const MyComponent = () => {
       
       <div className="w-5/7 p-6">
   <div className="flex justify-between items-center mb-4">
-    <h1 className="text-2xl font-bold">All Books</h1>
+    <h1 className="text-3xl font-bold">All Books</h1>
     <Link href="/new">
       <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm">
         New
