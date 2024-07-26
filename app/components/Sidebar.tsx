@@ -107,15 +107,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
           </div>
         </div>
         <div className="w-full text-center mb-6">
-        <button
-  onClick={handleSearch}
-  className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
-  style={{ width: 'auto' }}
->
-  Search
-</button>
-
-
+          <button
+            onClick={handleSearch}
+            className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
+            style={{ width: 'auto' }}
+          >
+            Search
+          </button>
         </div>
         <nav className="flex flex-col mt-2">
           {navigation.map((item) => (
@@ -129,15 +127,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             </Link>
           ))}
         </nav>
-      </div>
-      <div className="px-4 py-6">
-        <button
-          className="w-full flex items-center justify-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
-          onClick={() => setIsLogoutModalOpen(true)}
-        >
-          <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-3xl mr-3" />
-          Log out
-        </button>
+        <div className="px-4 py-6">
+          <button
+            className="w-full flex items-center justify-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
+            onClick={() => setIsLogoutModalOpen(true)}
+          >
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-3xl mr-3" />
+            Log out
+          </button>
+        </div>
       </div>
       <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
         This is a Dashboard Sidebar Navigation by pantazisoftware.
