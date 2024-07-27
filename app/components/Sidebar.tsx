@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, orderBy } from 'firebase/firestore';
 import { db, getAuth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
 import LogoutModal from './LogoutModal';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]) => void;
+  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string; createdAt: any }[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -45,7 +45,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
     const q = query(
       collection(db, 'tasks'),
       where('title', '>=', searchTerm),
-      where('title', '<=', searchTerm + '\uf8ff')
+      where('title', '<=', searchTerm + '\uf8ff'),
+      orderBy('createdAt', 'asc')
     );
     const querySnapshot = await getDocs(q);
     const results = querySnapshot.docs.map(doc => ({
@@ -56,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
       author: doc.data().author,
       url: doc.data().url,
       coverImage: doc.data().coverImage,
+      createdAt: doc.data().createdAt
     }));
     onSearchResult(results);
   };

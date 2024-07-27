@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { UserContext } from './_app';
 import Sidebar from '../components/Sidebar';
@@ -9,8 +9,8 @@ import Card from '../components/Card';
 
 const MyComponent = () => {
   const user = useContext(UserContext);
-  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
-  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]>([]);
+  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const MyComponent = () => {
       if (user) {
         try {
           const tasksCollection = collection(db, 'tasks');
-          const q = query(tasksCollection, where('userId', '==', user.uid));
+          const q = query(tasksCollection, where('userId', '==', user.uid), orderBy('createdAt', 'asc'));
           const querySnapshot = await getDocs(q);
 
           const tasksData = querySnapshot.docs.map((doc) => ({
@@ -32,6 +32,7 @@ const MyComponent = () => {
             author: string;
             url: string;
             coverImage: string;
+            createdAt: any;
           }[];
 
           setItems(tasksData);
@@ -50,7 +51,7 @@ const MyComponent = () => {
     }
   }, [router.query.searchResults]);
 
-  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string }[]) => {
+  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]) => {
     setSearchResults(results);
   };
 
@@ -68,25 +69,24 @@ const MyComponent = () => {
         <Sidebar onSearchResult={handleSearch} />
       </div>
       
-      <div className="w-5/7 p-6">
-  <div className="flex justify-between items-center mb-4">
-    <h1 className="text-3xl font-bold">All Books</h1>
-    <Link href="/new">
-      <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm">
-        New
-      </button>
-    </Link>
-  </div>
+      <div className="w-5/6 p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold">All Books</h1>
+          <Link href="/new">
+            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm">
+              New
+            </button>
+          </Link>
+        </div>
 
-  <div className="w-full grid grid-cols-custom-layout gap-8">
-    {searchResults.length > 0 ? (
-      <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
-    ) : (
-      <Card books={items} onCheckboxChange={handleCheckboxChange} />
-    )}
-  </div>
-</div>
-
+        <div className="w-full grid grid-cols-custom-layout gap-8">
+          {searchResults.length > 0 ? (
+            <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
+          ) : (
+            <Card books={items} onCheckboxChange={handleCheckboxChange} />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
