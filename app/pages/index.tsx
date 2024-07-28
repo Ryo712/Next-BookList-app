@@ -69,7 +69,7 @@ const MyComponent = () => {
         <Sidebar onSearchResult={handleSearch} />
       </div>
       
-      <div className="w-5/6 p-6">
+      <div className="w-3/4 p-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">All Books</h1>
           <Link href="/new">
@@ -79,7 +79,7 @@ const MyComponent = () => {
           </Link>
         </div>
 
-        <div className="w-full grid grid-cols-custom-layout gap-8">
+        <div className="w-full grid gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
           {searchResults.length > 0 ? (
             <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
           ) : (
