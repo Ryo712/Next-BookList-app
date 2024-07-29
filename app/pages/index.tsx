@@ -69,7 +69,7 @@ const MyComponent = () => {
         <Sidebar onSearchResult={handleSearch} />
       </div>
       
-      <div className="w-3/4 p-6">
+      <div className="w-2/3 p-6 ml-0">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">All Books</h1>
           <Link href="/new">
