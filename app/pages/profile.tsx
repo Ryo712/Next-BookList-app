@@ -81,27 +81,21 @@ const Profile: React.FC = () => {
           align-items: center;
           height: 100vh;
           width: 100vw;
-          padding: 40px 20px;
-          background-color: #f5f5f5;
+          background-color: white;
           box-sizing: border-box;
         }
 
         .profile-content {
+          text-align: center;
           width: 100%;
-          max-width: 600px;
-          background: white;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          padding: 40px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          box-sizing: border-box;
+          max-width: 400px;
+          padding: 20px;
         }
 
         .profile-title {
           font-size: 24px;
           font-weight: bold;
           margin-bottom: 20px;
-          text-align: center;
         }
 
         .profile-section {
