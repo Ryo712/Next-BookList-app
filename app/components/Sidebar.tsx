@@ -140,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
         </div>
       </div>
       <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
-        This is a Dashboard Sidebar Navigation by pantazisoftware.
+      © 2024 Book List App by Ryo Oshiro.
       </footer>
       <LogoutModal
         isOpen={isLogoutModalOpen}
