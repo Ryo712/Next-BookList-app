@@ -53,7 +53,16 @@ const ReadingPage: React.FC = () => {
       try {
         const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
-        fetchReadingTasks();
+
+        // 状態を即座に更新
+        setReadingTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === taskId ? { ...task, status: newStatus } : task
+          )
+        );
+
+        // タスクを再取得して最新状態を反映
+        await fetchReadingTasks();
       } catch (error) {
         console.error('ステータスの更新に失敗しました:', error);
       }
@@ -82,7 +91,7 @@ const ReadingPage: React.FC = () => {
       </div>
       <div className="w-3/4 p-6">
         <h1 className="text-3xl font-bold mb-4">Reading Books</h1>
-        <Card books={readingTasks} onCheckboxChange={(taskId) => handleCheckboxChange(taskId, 3)} /> {/* ステータス3に変更 */}
+        <Card books={readingTasks} onCheckboxChange={handleCheckboxChange} /> {/* ステータス3に変更 */}
       </div>
     </div>
   );

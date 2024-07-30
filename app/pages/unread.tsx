@@ -53,7 +53,16 @@ const UnreadPage: React.FC = () => {
       try {
         const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
-        fetchUnreadTasks();
+
+        // 状態を即座に更新
+        setUnreadTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === taskId ? { ...task, status: newStatus } : task
+          )
+        );
+
+        // タスクを再取得して最新状態を反映
+        await fetchUnreadTasks();
       } catch (error) {
         console.error('ステータスの更新に失敗しました:', error);
       }
