@@ -19,8 +19,11 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
   const router = useRouter();
 
-  const handleCardClick = (id: string) => {
-    router.push(`/cards/${id}`);
+  const handleCardClick = (id: string, event: React.MouseEvent) => {
+    // チェックボックスをクリックした場合は詳細画面に遷移しない
+    if ((event.target as HTMLElement).tagName !== 'INPUT') {
+      router.push(`/cards/${id}`);
+    }
   };
 
   const handleChange = (id: string, checked: boolean) => {
@@ -36,7 +39,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
             <div
               key={index}
               className="bg-white shadow rounded-lg overflow-hidden min-w-[250px] cursor-pointer"
-              onClick={() => handleCardClick(book.id)}
+              onClick={(event) => handleCardClick(book.id, event)}
             >
               <img
                 alt="Book Cover"
