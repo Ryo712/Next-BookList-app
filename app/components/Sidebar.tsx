@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { collection, query, where, getDocs, doc, getDoc, orderBy } from 'firebase/firestore';
 import { db, getAuth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             />
           ) : (
             <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-700">
-              No Image
+              <FontAwesomeIcon icon={faUserCircle} className="text-7xl" />
             </div>
           )}
           <div className="text-center mt-4 mb-4">
@@ -140,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
         </div>
       </div>
       <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
-      © 2024 Book List App by Ryo Oshiro.
+        © 2024 Book List App by Ryo Oshiro.
       </footer>
       <LogoutModal
         isOpen={isLogoutModalOpen}

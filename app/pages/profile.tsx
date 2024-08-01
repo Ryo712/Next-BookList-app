@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from './_app';
 import { db, storage } from '../firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -11,6 +13,7 @@ const Profile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);  // ローディング状態を管理
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -19,15 +22,19 @@ const Profile: React.FC = () => {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            setUsername(userData.username);
-            setEmail(userData.email);
-            setProfileImage(userData.profileImage);
+            setUsername(userData.username || 'No Name');
+            setEmail(userData.email || 'No Email');
+            setProfileImage(userData.profileImage || null);
           } else {
             console.log('User document does not exist');
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
+        } finally {
+          setLoading(false);  // データ取得後、ローディングを解除
         }
+      } else {
+        setLoading(false);  // ユーザーが存在しない場合もローディングを解除
       }
     };
 
@@ -68,7 +75,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (!user || !username || !email) {
+  if (loading) {
     return <p>Loading...</p>;
   }
 
@@ -209,7 +216,7 @@ const Profile: React.FC = () => {
             {profileImage ? (
               <img src={profileImage} alt="Profile" className="profile-image-img" />
             ) : (
-              'R'
+              <FontAwesomeIcon icon={faUserCircle} className="text-9xl" />
             )}
           </div>
           <div className="profile-info">
