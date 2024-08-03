@@ -57,7 +57,6 @@ const MyComponent = () => {
 
   const handleCheckboxChange = async (id: string, newStatus: number) => {
     try {
-      // ステータスの更新ロジックをここに追加
     } catch (error) {
       console.error('Error updating status:', error);
     }

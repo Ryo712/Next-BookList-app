@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const router = useRouter();
 
+  
   useEffect(() => {
     const fetchUserProfileImage = async () => {
       if (user) {
@@ -93,7 +94,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
           )}
           <div className="text-center mt-4 mb-4">
             <p className="text-sm font-semibold text-gray-800">{user?.username || 'No Name'}</p>
-            <p className="text-xs text-gray-400">Administrator</p>
           </div>
         </div>
         <div className="relative w-full mb-6 text-center">

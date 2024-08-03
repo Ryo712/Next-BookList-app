@@ -8,7 +8,7 @@ interface Book {
   status: number;
   author: string;
   url: string;
-  coverImage: string; // coverImageを追加
+  coverImage: string; 
 }
 
 interface CardProps {
