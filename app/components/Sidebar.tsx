@@ -44,18 +44,42 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
     console.log('Search triggered with term:', searchTerm); // デバッグログ
     if (onSearchResult && searchTerm.trim() !== '') {
       try {
-        const q = query(
+        const titleQuery = query(
           collection(db, 'tasks'),
           where('userId', '==', user?.uid),
           where('title', '>=', searchTerm),
           where('title', '<=', searchTerm + '\uf8ff'),
           orderBy('title')
         );
-        const querySnapshot = await getDocs(q);
-        const results = querySnapshot.docs.map(doc => ({
+        const authorQuery = query(
+          collection(db, 'tasks'),
+          where('userId', '==', user?.uid),
+          where('author', '>=', searchTerm),
+          where('author', '<=', searchTerm + '\uf8ff'),
+          orderBy('author')
+        );
+
+        const [titleSnapshot, authorSnapshot] = await Promise.all([
+          getDocs(titleQuery),
+          getDocs(authorQuery)
+        ]);
+
+        const titleResults = titleSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
+        const authorResults = authorSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // 重複を排除して結合
+        const resultsMap = new Map();
+        [...titleResults, ...authorResults].forEach(result => {
+          resultsMap.set(result.id, result);
+        });
+        const results = Array.from(resultsMap.values());
+
         console.log('Search results:', results); // デバッグログ
         if (results.length === 0) {
           console.log('No results found for search term:', searchTerm);
