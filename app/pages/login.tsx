@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { signInWithEmail } from '../lib/firebase/apis/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 const Logins: React.FC = () => {
     const { handleSubmit, register } = useForm();
@@ -60,6 +61,12 @@ const Logins: React.FC = () => {
                 </div>
                 <button style={styles.loginButton} type="submit">Login</button>
             </form>
+            <div style={styles.footer}>
+                Join us today!
+                <Link href="/register" passHref>
+                    <span style={styles.link}>Register here</span>
+                </Link>
+            </div>
         </div>
     );
 };
@@ -136,6 +143,12 @@ const styles = {
         whiteSpace: 'pre-wrap' as 'pre-wrap',
         textAlign: 'center' as 'center',
         maxWidth: '400px',
+    },
+    link: {
+        color: '#065fd4',
+        cursor: 'pointer' as 'pointer',
+        textDecoration: 'underline',
+        marginLeft: '5px',
     }
 };
 
