@@ -30,18 +30,18 @@ function MyApp({ Component, pageProps }: AppProps) {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUser({ ...user, username: userData?.username } as UserContextType);
-          if (router.pathname === '/login') {
+          if (router.pathname === '/login' || router.pathname === '/register') {
             router.push('/');
           }
         } else {
           setUser(user as UserContextType); // Firestoreドキュメントが存在しない場合もセット
-          if (router.pathname === '/login') {
+          if (router.pathname === '/login' || router.pathname === '/register') {
             router.push('/');
           }
         }
       } else {
         setUser(null);
-        if (router.pathname !== '/login') {
+        if (router.pathname !== '/login' && router.pathname !== '/register') {
           router.push('/login');
         }
       }
