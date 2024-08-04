@@ -253,7 +253,6 @@ const Profile: React.FC = () => {
             )}
           </div>
         </div>
-        <h2 className="security-title">Account security</h2>
         <div className="security-section">
           <div className="security-item">
             <div>

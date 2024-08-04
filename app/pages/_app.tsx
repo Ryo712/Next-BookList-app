@@ -30,16 +30,25 @@ function MyApp({ Component, pageProps }: AppProps) {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUser({ ...user, username: userData?.username } as UserContextType);
+          if (router.pathname === '/login') {
+            router.push('/');
+          }
         } else {
           setUser(user as UserContextType); // Firestoreドキュメントが存在しない場合もセット
+          if (router.pathname === '/login') {
+            router.push('/');
+          }
         }
       } else {
         setUser(null);
+        if (router.pathname !== '/login') {
+          router.push('/login');
+        }
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const handleSearchResult = (results: any[]) => {
     setSearchResults(results);

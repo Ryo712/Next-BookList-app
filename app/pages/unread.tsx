@@ -3,7 +3,6 @@ import { updateDoc, doc, collection, query, where, getDocs } from 'firebase/fire
 import { db } from '../firebaseConfig';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
-import { useRouter } from 'next/router';
 import { UserContext } from './_app';
 
 const UnreadPage: React.FC = () => {
@@ -17,7 +16,6 @@ const UnreadPage: React.FC = () => {
     url: string;
     coverImage: string;
   }[]>([]);
-  const router = useRouter();
 
   const fetchUnreadTasks = async () => {
     if (user) {
@@ -69,25 +67,10 @@ const UnreadPage: React.FC = () => {
     }
   };
 
-  const handleSearch = (results: {
-    id: string;
-    title: string;
-    description: string;
-    status: number;
-    author: string;
-    url: string;
-    coverImage: string;
-  }[]) => {
-    router.push({
-      pathname: '/',
-      query: { searchResults: JSON.stringify(results) }
-    });
-  };
-
   return (
     <div className="flex h-screen">
       <div className="w-1/6">
-        <Sidebar onSearchResult={handleSearch} />
+        <Sidebar />
       </div>
       <div className="w-3/4 p-6">
         <h1 className="text-3xl font-bold mb-4">Unread Books</h1>

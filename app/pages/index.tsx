@@ -36,8 +36,9 @@ const MyComponent = () => {
           }[];
 
           setItems(tasksData);
+          setSearchResults(tasksData); // 初期表示は全タスク
         } catch (error) {
-          console.error('Error fetching tasks:', error);
+          console.error('タスクの取得中にエラーが発生しました:', error);
         }
       }
     };
@@ -45,27 +46,22 @@ const MyComponent = () => {
     fetchData();
   }, [user]);
 
-  useEffect(() => {
-    if (router.query.searchResults) {
-      setSearchResults(JSON.parse(router.query.searchResults as string));
-    }
-  }, [router.query.searchResults]);
-
-  const handleSearch = (results: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]) => {
+  const handleSearchResults = (results: any[]) => {
     setSearchResults(results);
   };
 
   const handleCheckboxChange = async (id: string, newStatus: number) => {
     try {
+      // ステータス更新の処理
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error('ステータス更新中にエラーが発生しました:', error);
     }
   };
 
   return (
     <div className="flex h-screen">
       <div className="w-1/6">
-        <Sidebar onSearchResult={handleSearch} />
+        <Sidebar onSearchResult={handleSearchResults} />
       </div>
       
       <div className="w-2/3 p-6 ml-0">
@@ -79,11 +75,7 @@ const MyComponent = () => {
         </div>
 
         <div className="w-full grid gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          {searchResults.length > 0 ? (
-            <Card books={searchResults} onCheckboxChange={handleCheckboxChange} />
-          ) : (
-            <Card books={items} onCheckboxChange={handleCheckboxChange} />
-          )}
+          <Card books={searchResults.length > 0 ? searchResults : items} onCheckboxChange={handleCheckboxChange} />
         </div>
       </div>
     </div>

@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket, faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import { collection, query, where, getDocs, doc, getDoc, orderBy } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db, getAuth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
 import LogoutModal from './LogoutModal';
 
 interface SidebarProps {
-  onSearchResult: (result: { id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string; createdAt: any }[]) => void;
+  onSearchResult?: (results: any[]) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
@@ -25,7 +25,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const router = useRouter();
 
-  
   useEffect(() => {
     const fetchUserProfileImage = async () => {
       if (user) {
@@ -42,25 +41,33 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   }, [user]);
 
   const handleSearch = async () => {
-    if (searchTerm.trim() === '') return; // 空の検索は無視
-    const q = query(
-      collection(db, 'tasks'),
-      where('title', '>=', searchTerm),
-      where('title', '<=', searchTerm + '\uf8ff'),
-      orderBy('createdAt', 'asc')
-    );
-    const querySnapshot = await getDocs(q);
-    const results = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      title: doc.data().title,
-      description: doc.data().description,
-      status: doc.data().status,
-      author: doc.data().author,
-      url: doc.data().url,
-      coverImage: doc.data().coverImage,
-      createdAt: doc.data().createdAt
-    }));
-    onSearchResult(results);
+    console.log('Search triggered with term:', searchTerm); // デバッグログ
+    if (onSearchResult && searchTerm.trim() !== '') {
+      try {
+        const q = query(
+          collection(db, 'tasks'),
+          where('userId', '==', user?.uid),
+          where('title', '>=', searchTerm),
+          where('title', '<=', searchTerm + '\uf8ff'),
+          orderBy('title')
+        );
+        const querySnapshot = await getDocs(q);
+        const results = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('Search results:', results); // デバッグログ
+        if (results.length === 0) {
+          console.log('No results found for search term:', searchTerm);
+        }
+        onSearchResult(results);
+      } catch (error) {
+        console.error('Search error:', error);
+      }
+    } else {
+      console.log('No search term or onSearchResult not defined');
+      onSearchResult && onSearchResult([]);
+    }
   };
 
   const handleProfileClick = () => {
@@ -96,27 +103,31 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             <p className="text-sm font-semibold text-gray-800">{user?.username || 'No Name'}</p>
           </div>
         </div>
-        <div className="relative w-full mb-6 text-center">
-          <input
-            type="search"
-            className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md focus:outline-none focus:ring focus:border-blue-300 border border-gray-300"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
-            <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
-          </div>
-        </div>
-        <div className="w-full text-center mb-6">
-          <button
-            onClick={handleSearch}
-            className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
-            style={{ width: 'auto' }}
-          >
-            Search
-          </button>
-        </div>
+        {router.pathname === '/' && onSearchResult && (
+          <>
+            <div className="relative w-full mb-6 text-center">
+              <input
+                type="search"
+                className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md focus:outline-none focus:ring focus:border-blue-300 border border-gray-300"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
+                <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
+            <div className="w-full text-center mb-6">
+              <button
+                onClick={handleSearch}
+                className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
+                style={{ width: 'auto' }}
+              >
+                Search
+              </button>
+            </div>
+          </>
+        )}
         <nav className="flex flex-col mt-2">
           {navigation.map((item) => (
             <Link href={item.name === 'Unread' ? '/unread' : item.name === 'Reading' ? '/reading' : '/read'} key={item.name}>
