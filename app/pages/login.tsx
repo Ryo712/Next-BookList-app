@@ -32,7 +32,7 @@ const Logins: React.FC = () => {
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Think it. Make it.</h1>
-            <h2 style={styles.subtitle}>Log in to your Book-List account</h2>
+            <h2 style={styles.subtitle}>Log in to your Book List account</h2>
             <form onSubmit={onSubmit} style={styles.form}>
                 <div style={styles.inputGroup}>
                     <label style={styles.label} htmlFor="email">Email</label>

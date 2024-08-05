@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle, faCamera } from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from './_app';
 import { db, storage } from '../firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -13,7 +13,7 @@ const Profile: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);  // ローディング状態を管理
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -31,10 +31,10 @@ const Profile: React.FC = () => {
         } catch (error) {
           console.error('Error fetching user data:', error);
         } finally {
-          setLoading(false);  // データ取得後、ローディングを解除
+          setLoading(false);
         }
       } else {
-        setLoading(false);  // ユーザーが存在しない場合もローディングを解除
+        setLoading(false);
       }
     };
 
@@ -88,7 +88,7 @@ const Profile: React.FC = () => {
           align-items: center;
           height: 100vh;
           width: 100vw;
-          background-color: white;
+          background: #ffffff;
           box-sizing: border-box;
         }
 
@@ -96,12 +96,14 @@ const Profile: React.FC = () => {
           text-align: center;
           width: 100%;
           max-width: 400px;
-          padding: 20px;
+          padding: 40px 30px;
+          box-sizing: border-box;
         }
 
         .profile-title {
-          font-size: 24px;
+          font-size: 28px;
           font-weight: bold;
+          color: #333;
           margin-bottom: 20px;
         }
 
@@ -113,22 +115,43 @@ const Profile: React.FC = () => {
         }
 
         .profile-image {
-          width: 100px;
-          height: 100px;
-          background-color: #d1d1d1;
+          width: 120px;
+          height: 120px;
+          background-color: #e0e0e0;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 40px;
           color: #ffffff;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
+          position: relative;
+          overflow: hidden;
         }
 
         .profile-image-img {
-          width: 100px;
-          height: 100px;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .edit-icon {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          top: 0;
+          background: rgba(0, 0, 0, 0.5);
+          color: white;
           border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .edit-icon .fa-camera {
+          font-size: 24px;
         }
 
         .profile-info {
@@ -145,11 +168,11 @@ const Profile: React.FC = () => {
         .profile-input {
           width: 100%;
           max-width: 300px;
-          padding: 8px;
+          padding: 10px;
           border: 1px solid #cccccc;
           border-radius: 4px;
           font-size: 14px;
-          margin-bottom: 8px;
+          margin-bottom: 12px;
         }
 
         .profile-link {
@@ -192,12 +215,12 @@ const Profile: React.FC = () => {
         }
 
         .button {
-          padding: 8px 16px;
-          background-color: #f0f0f0;
-          border: 1px solid #cccccc;
+          padding: 10px 20px;
+          background-color: #007bff;
+          border: none;
           border-radius: 4px;
           font-size: 14px;
-          color: #333333;
+          color: white;
           cursor: pointer;
           transition: background-color 0.3s;
           margin-right: 8px;
@@ -206,6 +229,15 @@ const Profile: React.FC = () => {
         }
 
         .button:hover {
+          background-color: #0056b3;
+        }
+
+        .button-secondary {
+          background-color: #f0f0f0;
+          color: #333;
+        }
+
+        .button-secondary:hover {
           background-color: #e0e0e0;
         }
       `}</style>
@@ -218,7 +250,22 @@ const Profile: React.FC = () => {
             ) : (
               <FontAwesomeIcon icon={faUserCircle} className="text-9xl" />
             )}
+            <label htmlFor="profileImageInput" className="edit-icon">
+              <FontAwesomeIcon icon={faCamera} className="fa-camera" />
+            </label>
           </div>
+          
+          <input
+            type="file"
+            id="profileImageInput"
+            style={{ display: 'none' }}
+            onChange={(e) =>
+              setProfileImageFile(e.target.files ? e.target.files[0] : null)
+            }
+          />
+          {profileImageFile && (
+            <button className="button" onClick={handleProfileImageChange}>Update Profile Image</button>
+          )}
           <div className="profile-info">
             <label htmlFor="preferredName" className="profile-label">User name</label>
             {isEditing ? (
@@ -231,25 +278,13 @@ const Profile: React.FC = () => {
                   className="profile-input"
                 />
                 <button className="button" onClick={handleUsernameChange}>Save</button>
-                <button className="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                <button className="button button-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
               </>
             ) : (
               <>
                 <p className="profile-info-text">{username}</p>
                 <button className="button" onClick={() => setIsEditing(true)}>Edit</button>
               </>
-            )}
-            <input
-              type="file"
-              id="profileImageInput"
-              style={{ display: 'none' }}
-              onChange={(e) =>
-                setProfileImageFile(e.target.files ? e.target.files[0] : null)
-              }
-            />
-            <label htmlFor="profileImageInput" className="profile-link">Add photo</label>
-            {profileImageFile && (
-              <button className="button" onClick={handleProfileImageChange}>Update Profile Image</button>
             )}
           </div>
         </div>
