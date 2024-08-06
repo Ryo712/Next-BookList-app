@@ -215,21 +215,22 @@ const Profile: React.FC = () => {
         }
 
         .button {
-          padding: 10px 20px;
-          background-color: #007bff;
-          border: none;
+          padding: 8px 16px;
+          background-color: #ffffff;
+          border: 1px solid #dcdcdc;
           border-radius: 4px;
           font-size: 14px;
-          color: white;
+          color: #333333;
           cursor: pointer;
-          transition: background-color 0.3s;
+          transition: background-color 0.3s, box-shadow 0.3s;
           margin-right: 8px;
           display: inline-block;
           margin-top: 10px;
         }
 
         .button:hover {
-          background-color: #0056b3;
+          background-color: #f5f5f5;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         }
 
         .button-secondary {
@@ -254,7 +255,6 @@ const Profile: React.FC = () => {
               <FontAwesomeIcon icon={faCamera} className="fa-camera" />
             </label>
           </div>
-          
           <input
             type="file"
             id="profileImageInput"
@@ -290,10 +290,10 @@ const Profile: React.FC = () => {
         </div>
         <div className="security-section">
           <div className="security-item">
-            <div>
-              <label className="security-label">Email</label>
-              <p className="security-info">{email}</p>
-            </div>
+          <div>
+            <label className="security-label">Email</label>
+            <p className="security-info" style={{ fontSize: '16px' }}>{email}</p>
+          </div>
           </div>
         </div>
       </div>
