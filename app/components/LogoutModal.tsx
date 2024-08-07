@@ -16,7 +16,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ isOpen, onClose, onLogout }) 
       <div style={styles.modal}>
         <FontAwesomeIcon icon={faHouseCircleXmark} style={styles.icon} />
         <h1 style={styles.title}>Log out of your account?</h1>
-        <p style={styles.message}>You will need to log back in to access your Book-List account.</p>
+        <p style={styles.message}>You will need to log back in to access your Book List account.</p>
         <div style={styles.buttonContainer}>
           <button onClick={onLogout} style={{ ...styles.button, ...styles.logoutButton }}>Log out</button>
           <button onClick={onClose} style={{ ...styles.button, ...styles.cancelButton }}>Cancel</button>
