@@ -14,9 +14,9 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   const navigation = [
-    { name: 'Unread', icon: faBook },
-    { name: 'Reading', icon: faBookOpen },
-    { name: 'Read', icon: faCheckDouble },
+    { name: 'Unread', icon: faBook, href: '/unread' },
+    { name: 'Reading', icon: faBookOpen, href: '/reading' },
+    { name: 'Read', icon: faCheckDouble, href: '/read' },
   ];
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   }, [user]);
 
   const handleSearch = async () => {
-    console.log('Search triggered with term:', searchTerm); // デバッグログ
     if (onSearchResult && searchTerm.trim() !== '') {
       try {
         const titleQuery = query(
@@ -73,23 +72,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
           ...doc.data(),
         }));
 
-        // 重複を排除して結合
         const resultsMap = new Map();
         [...titleResults, ...authorResults].forEach(result => {
           resultsMap.set(result.id, result);
         });
         const results = Array.from(resultsMap.values());
 
-        console.log('Search results:', results); // デバッグログ
-        if (results.length === 0) {
-          console.log('No results found for search term:', searchTerm);
-        }
         onSearchResult(results);
       } catch (error) {
         console.error('Search error:', error);
       }
     } else {
-      console.log('No search term or onSearchResult not defined');
       onSearchResult && onSearchResult([]);
     }
   };
@@ -127,36 +120,55 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             <p className="text-sm font-semibold text-gray-800">{user?.username || 'No Name'}</p>
           </div>
         </div>
-        {router.pathname === '/' && onSearchResult && (
-          <>
-            <div className="relative w-full mb-6 text-center">
-              <input
-                type="search"
-                className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md focus:outline-none focus:ring focus:border-blue-300 border border-gray-300"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
-                <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
+        <div className="mb-12">
+          {router.pathname === '/' && onSearchResult ? (
+            <>
+              <div className="relative w-full mb-6 text-center">
+                <input
+                  type="search"
+                  className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md focus:outline-none focus:ring focus:border-blue-300 border border-gray-300"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
+                  <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
+                </div>
               </div>
-            </div>
-            <div className="w-full text-center mb-6">
-              <button
-                onClick={handleSearch}
-                className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
-                style={{ width: 'auto' }}
-              >
-                Search
-              </button>
-            </div>
-          </>
-        )}
+              <div className="w-full text-center mb-6">
+                <button
+                  onClick={handleSearch}
+                  className="mt-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
+                  style={{ width: 'auto' }}
+                >
+                  Search
+                </button>
+              </div>
+            </>
+          ) : (
+            
+            <>
+              <div className="relative w-full mb-6 text-center">
+                <div className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md border border-gray-300" style={{ visibility: 'hidden' }}>
+                  Search
+                </div>
+              </div>
+              <div className="w-full text-center mb-6">
+                <button
+                  className="mt-2 px-3 py-2 bg-gray-100 text-black font-medium border border-gray-300 rounded-md shadow-sm transition duration-300"
+                  style={{ width: 'auto', visibility: 'hidden' }}
+                >
+                  Search
+                </button>
+              </div>
+            </>
+          )}
+        </div>
         <nav className="flex flex-col mt-2">
           {navigation.map((item) => (
-            <Link href={item.name === 'Unread' ? '/unread' : item.name === 'Reading' ? '/reading' : '/read'} key={item.name}>
+            <Link href={item.href} key={item.name}>
               <div className={`flex items-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg ${
-                item.name === 'Dashboard' ? 'bg-gray-700 text-white' : 'hover:bg-gray-100'
+                router.pathname === item.href ? 'bg-gray-100' : 'hover:bg-gray-100'
               }`}>
                 <FontAwesomeIcon icon={item.icon} className="text-3xl mr-3" />
                 {item.name}
@@ -164,15 +176,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             </Link>
           ))}
         </nav>
-        <div className="px-4 py-6">
-          <button
-            className="w-full flex items-center justify-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
-            onClick={() => setIsLogoutModalOpen(true)}
-          >
-            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-3xl mr-3" />
-            Log out
-          </button>
-        </div>
+        <button
+          className="w-full flex items-center justify-center px-4 py-2 mt-9 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
+          onClick={() => setIsLogoutModalOpen(true)}
+        >
+          <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-3xl mr-3" />
+          Log out
+        </button>
       </div>
       <footer className="w-full bg-gray-800 text-gray-100 p-4 text-sm text-center fixed bottom-0 left-0">
         © 2024 Book List App by Ryo Oshiro.
