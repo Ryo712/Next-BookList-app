@@ -171,7 +171,7 @@ const EditTask: React.FC = () => {
           )}
         </div>
         <div style={styles.property}>
-          <span style={styles.propertyLabel}>著者</span>
+          <span style={styles.propertyLabel}>Author</span>
           {isEditingAuthor ? (
             <input
               type="text"
@@ -192,7 +192,7 @@ const EditTask: React.FC = () => {
           )}
         </div>
         <div style={styles.property}>
-          <span style={styles.propertyLabel}>カバー画像</span>
+          <span style={styles.propertyLabel}>Cover Image</span>
           <div style={styles.coverImageContainer}>
             {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
             <div style={styles.addFileContainer} onClick={handleAddFileClick}>
@@ -230,7 +230,7 @@ const EditTask: React.FC = () => {
           )}
         </div>
         <div style={styles.property}>
-          <span style={styles.propertyLabel}>説明</span>
+          <span style={styles.propertyLabel}>Description</span>
           {isEditingDescription ? (
             <input
               type="text"
