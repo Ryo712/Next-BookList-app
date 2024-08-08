@@ -12,7 +12,6 @@ const Profile: React.FC = () => {
   const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +52,6 @@ const Profile: React.FC = () => {
         });
 
         setProfileImage(profileImageUrl);
-        setIsEditing(false);
         console.log('Profile image updated');
       } catch (error) {
         console.error('Error updating profile image:', error);
@@ -67,7 +65,6 @@ const Profile: React.FC = () => {
         await updateDoc(doc(db, 'users', user.uid), {
           username: username,
         });
-        setIsEditing(false);
         console.log('Username updated');
       } catch (error) {
         console.error('Error updating username:', error);
@@ -268,32 +265,23 @@ const Profile: React.FC = () => {
           )}
           <div className="profile-info">
             <label htmlFor="preferredName" className="profile-label">User name</label>
-            {isEditing ? (
-              <>
-                <input
-                  type="text"
-                  id="preferredName"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="profile-input"
-                />
-                <button className="button" onClick={handleUsernameChange}>Save</button>
-                <button className="button button-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-              </>
-            ) : (
-              <>
-                <p className="profile-info-text">{username}</p>
-                <button className="button" onClick={() => setIsEditing(true)}>Edit</button>
-              </>
-            )}
+            <input
+              type="text"
+              id="preferredName"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="profile-input"
+            />
+            
+            <button className="button" onClick={handleUsernameChange}>Save</button>
           </div>
         </div>
         <div className="security-section">
           <div className="security-item">
-          <div>
-            <label className="security-label">Email</label>
-            <p className="security-info" style={{ fontSize: '16px' }}>{email}</p>
-          </div>
+            <div>
+              <label className="security-label">Email</label>
+              <p className="security-info" style={{ fontSize: '16px' }}>{email}</p>
+            </div>
           </div>
         </div>
       </div>
