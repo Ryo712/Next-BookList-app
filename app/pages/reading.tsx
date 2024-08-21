@@ -54,14 +54,12 @@ const ReadingPage: React.FC = () => {
         const taskDocRef = doc(db, 'tasks', taskId);
         await updateDoc(taskDocRef, { status: newStatus });
 
-        // 状態を即座に更新
         setReadingTasks((prevTasks) =>
           prevTasks.map((task) =>
             task.id === taskId ? { ...task, status: newStatus } : task
           )
         );
 
-        // タスクを再取得して最新状態を反映
         await fetchReadingTasks();
       } catch (error) {
         console.error('ステータスの更新に失敗しました:', error);
