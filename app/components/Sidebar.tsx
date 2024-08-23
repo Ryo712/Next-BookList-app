@@ -2,8 +2,23 @@ import React, { useState, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faBookOpen, faCheckDouble, faSearch, faArrowRightFromBracket, faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import {
+  faBook,
+  faBookOpen,
+  faCheckDouble,
+  faSearch,
+  faArrowRightFromBracket,
+  faUserCircle,
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy,
+} from 'firebase/firestore';
 import { db, getAuth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
 import LogoutModal from './LogoutModal';
@@ -60,20 +75,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
 
         const [titleSnapshot, authorSnapshot] = await Promise.all([
           getDocs(titleQuery),
-          getDocs(authorQuery)
+          getDocs(authorQuery),
         ]);
 
-        const titleResults = titleSnapshot.docs.map(doc => ({
+        const titleResults = titleSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        const authorResults = authorSnapshot.docs.map(doc => ({
+        const authorResults = authorSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
 
         const resultsMap = new Map();
-        [...titleResults, ...authorResults].forEach(result => {
+        [...titleResults, ...authorResults].forEach((result) => {
           resultsMap.set(result.id, result);
         });
         const results = Array.from(resultsMap.values());
@@ -102,9 +117,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
     <aside className="sidebar flex flex-col w-60 h-screen bg-white text-grey-800 shadow-2xl fixed left-0 top-0 bottom-0 z-10">
       <div className="px-4 py-6 flex-grow">
         <Link href="/">
-          <div className="text-xl font-semibold text-gray-800 text-center cursor-pointer">Book List</div>
+          <div className="text-xl font-semibold text-gray-800 text-center cursor-pointer">
+            Book List
+          </div>
         </Link>
-        <div className="flex flex-col items-center mt-6" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
+        <div
+          className="flex flex-col items-center mt-6"
+          onClick={handleProfileClick}
+          style={{ cursor: 'pointer' }}
+        >
           {profileImageURL ? (
             <img
               className="h-16 w-16 rounded-full object-cover"
@@ -117,7 +138,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
             </div>
           )}
           <div className="text-center mt-4 mb-4">
-            <p className="text-sm font-semibold text-gray-800">{user?.username || 'No Name'}</p>
+            <p className="text-sm font-semibold text-gray-800">
+              {user?.username || 'No Name'}
+            </p>
           </div>
         </div>
         <div className="mb-12">
@@ -131,8 +154,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onClick={handleSearch}>
-                  <FontAwesomeIcon icon={faSearch} className="h-4 w-4 text-gray-500" />
+                <div
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                  onClick={handleSearch}
+                >
+                  <FontAwesomeIcon
+                    icon={faSearch}
+                    className="h-4 w-4 text-gray-500"
+                  />
                 </div>
               </div>
               <div className="w-full text-center mb-6">
@@ -146,10 +175,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
               </div>
             </>
           ) : (
-            
             <>
               <div className="relative w-full mb-6 text-center">
-                <div className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md border border-gray-300" style={{ visibility: 'hidden' }}>
+                <div
+                  className="w-full pl-3 pr-10 py-2 bg-white text-gray-800 rounded-md border border-gray-300"
+                  style={{ visibility: 'hidden' }}
+                >
                   Search
                 </div>
               </div>
@@ -167,9 +198,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
         <nav className="flex flex-col mt-2">
           {navigation.map((item) => (
             <Link href={item.href} key={item.name}>
-              <div className={`flex items-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg ${
-                router.pathname === item.href ? 'bg-gray-100' : 'hover:bg-gray-100'
-              }`}>
+              <div
+                className={`flex items-center px-4 py-2 mt-2 text-sm font-semibold rounded-lg ${
+                  router.pathname === item.href
+                    ? 'bg-gray-100'
+                    : 'hover:bg-gray-100'
+                }`}
+              >
                 <FontAwesomeIcon icon={item.icon} className="text-3xl mr-3" />
                 {item.name}
               </div>
@@ -180,7 +215,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
           className="w-full flex items-center justify-center px-4 py-2 mt-9 text-sm font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600"
           onClick={() => setIsLogoutModalOpen(true)}
         >
-          <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-3xl mr-3" />
+          <FontAwesomeIcon
+            icon={faArrowRightFromBracket}
+            className="text-3xl mr-3"
+          />
           Log out
         </button>
       </div>

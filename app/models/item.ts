@@ -1,6 +1,6 @@
 export interface Item {
-    id: string;
-    name: string;
-    description: string;
-    status: number;
+  id: string;
+  name: string;
+  description: string;
+  status: number;
 }
