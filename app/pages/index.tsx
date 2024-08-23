@@ -9,8 +9,30 @@ import Card from '../components/Card';
 
 const MyComponent = () => {
   const user = useContext(UserContext);
-  const [items, setItems] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]>([]);
-  const [searchResults, setSearchResults] = useState<{ id: string; title: string; description: string; status: number; author: string; url: string; coverImage: string, createdAt: any }[]>([]);
+  const [items, setItems] = useState<
+    {
+      id: string;
+      title: string;
+      description: string;
+      status: number;
+      author: string;
+      url: string;
+      coverImage: string;
+      createdAt: any;
+    }[]
+  >([]);
+  const [searchResults, setSearchResults] = useState<
+    {
+      id: string;
+      title: string;
+      description: string;
+      status: number;
+      author: string;
+      url: string;
+      coverImage: string;
+      createdAt: any;
+    }[]
+  >([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,7 +40,11 @@ const MyComponent = () => {
       if (user) {
         try {
           const tasksCollection = collection(db, 'tasks');
-          const q = query(tasksCollection, where('userId', '==', user.uid), orderBy('createdAt', 'asc'));
+          const q = query(
+            tasksCollection,
+            where('userId', '==', user.uid),
+            orderBy('createdAt', 'asc')
+          );
           const querySnapshot = await getDocs(q);
 
           const tasksData = querySnapshot.docs.map((doc) => ({
@@ -63,7 +89,7 @@ const MyComponent = () => {
       <div className="w-1/6">
         <Sidebar onSearchResult={handleSearchResults} />
       </div>
-      
+
       <div className="w-2/3 p-6 ml-0">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">All Books</h1>
@@ -74,8 +100,16 @@ const MyComponent = () => {
           </Link>
         </div>
 
-        <div className="w-full grid gap-8" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-          <Card books={searchResults.length > 0 ? searchResults : items} onCheckboxChange={handleCheckboxChange} />
+        <div
+          className="w-full grid gap-8"
+          style={{
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          }}
+        >
+          <Card
+            books={searchResults.length > 0 ? searchResults : items}
+            onCheckboxChange={handleCheckboxChange}
+          />
         </div>
       </div>
     </div>

@@ -219,7 +219,9 @@ const Profile: React.FC = () => {
           font-size: 14px;
           color: #333333;
           cursor: pointer;
-          transition: background-color 0.3s, box-shadow 0.3s;
+          transition:
+            background-color 0.3s,
+            box-shadow 0.3s;
           margin-right: 8px;
           display: inline-block;
           margin-top: 10px;
@@ -227,7 +229,9 @@ const Profile: React.FC = () => {
 
         .button:hover {
           background-color: #f5f5f5;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+          box-shadow:
+            0 1px 3px rgba(0, 0, 0, 0.12),
+            0 1px 2px rgba(0, 0, 0, 0.24);
         }
 
         .button-secondary {
@@ -244,7 +248,11 @@ const Profile: React.FC = () => {
         <div className="profile-section">
           <div className="profile-image">
             {profileImage ? (
-              <img src={profileImage} alt="Profile" className="profile-image-img" />
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="profile-image-img"
+              />
             ) : (
               <FontAwesomeIcon icon={faUserCircle} className="text-9xl" />
             )}
@@ -261,10 +269,14 @@ const Profile: React.FC = () => {
             }
           />
           {profileImageFile && (
-            <button className="button" onClick={handleProfileImageChange}>Update Profile Image</button>
+            <button className="button" onClick={handleProfileImageChange}>
+              Update Profile Image
+            </button>
           )}
           <div className="profile-info">
-            <label htmlFor="preferredName" className="profile-label">User name</label>
+            <label htmlFor="preferredName" className="profile-label">
+              User name
+            </label>
             <input
               type="text"
               id="preferredName"
@@ -272,15 +284,19 @@ const Profile: React.FC = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="profile-input"
             />
-            
-            <button className="button" onClick={handleUsernameChange}>Save</button>
+
+            <button className="button" onClick={handleUsernameChange}>
+              Save
+            </button>
           </div>
         </div>
         <div className="security-section">
           <div className="security-item">
             <div>
               <label className="security-label">Email</label>
-              <p className="security-info" style={{ fontSize: '16px' }}>{email}</p>
+              <p className="security-info" style={{ fontSize: '16px' }}>
+                {email}
+              </p>
             </div>
           </div>
         </div>
