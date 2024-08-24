@@ -38,7 +38,8 @@ const Logins: React.FC = () => {
       <h1 style={styles.title}>Think it. Make it.</h1>
       <h2 style={styles.subtitle}>Log in to your Book List account</h2>
       <form onSubmit={onSubmit} style={styles.form}>
-        {errorMessage && <div style={styles.error}>{errorMessage}</div>} {/* エラーメッセージを表示 */}
+        {errorMessage && <div style={styles.error}>{errorMessage}</div>}{' '}
+        {/* エラーメッセージを表示 */}
         <div style={styles.inputGroup}>
           <label style={styles.label} htmlFor="email">
             Email
