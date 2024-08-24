@@ -10,6 +10,7 @@ const Logins: React.FC = () => {
   const { handleSubmit, register } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
@@ -20,12 +21,15 @@ const Logins: React.FC = () => {
       if (res) {
         console.log('ログイン成功');
         setShowPopup(true);
+        setErrorMessage(''); // 成功したらエラーメッセージをクリア
         router.push('/');
       } else {
         console.log('ログイン失敗');
+        setErrorMessage('Login failed. Please check your email and password.');
       }
     } catch (error) {
       console.error('ログインエラー:', error);
+      setErrorMessage('An error occurred during login. Please try again.'); // ネットワークエラー時のメッセージ
     }
   });
 
@@ -34,6 +38,8 @@ const Logins: React.FC = () => {
       <h1 style={styles.title}>Think it. Make it.</h1>
       <h2 style={styles.subtitle}>Log in to your Book List account</h2>
       <form onSubmit={onSubmit} style={styles.form}>
+        {errorMessage && <div style={styles.error}>{errorMessage}</div>}{' '}
+        {/* エラーメッセージを表示 */}
         <div style={styles.inputGroup}>
           <label style={styles.label} htmlFor="email">
             Email
@@ -104,6 +110,10 @@ const styles = {
   form: {
     width: '100%',
     maxWidth: '400px',
+  },
+  error: {
+    color: 'red',
+    marginBottom: '20px',
   },
   inputGroup: {
     textAlign: 'left' as 'left',
