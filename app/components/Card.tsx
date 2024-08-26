@@ -61,7 +61,7 @@ const Card: React.FC<CardProps> = ({ books, onCheckboxChange }) => {
                     }}
                     className="mr-2"
                   />
-                  <span>読了</span>
+                  <span>Read</span>
                 </div>
               </div>
             </div>
