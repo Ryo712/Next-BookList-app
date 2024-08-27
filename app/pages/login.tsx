@@ -37,7 +37,11 @@ const Logins: React.FC = () => {
       const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL!;
       const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD!;
 
-      const res = await signInWithEmailAndPassword(auth, guestEmail, guestPassword); // ここで signInWithEmailAndPassword と auth を使用
+      const res = await signInWithEmailAndPassword(
+        auth,
+        guestEmail,
+        guestPassword
+      ); // ここで signInWithEmailAndPassword と auth を使用
       if (res) {
         console.log('ゲストログイン成功');
         setErrorMessage(''); // 成功したらエラーメッセージをクリア
@@ -48,7 +52,9 @@ const Logins: React.FC = () => {
       }
     } catch (error) {
       console.error('ゲストログインエラー:', error);
-      setErrorMessage('An error occurred during guest login. Please try again.'); // ネットワークエラー時のメッセージ
+      setErrorMessage(
+        'An error occurred during guest login. Please try again.'
+      ); // ネットワークエラー時のメッセージ
     }
   };
 
@@ -96,9 +102,10 @@ const Logins: React.FC = () => {
             <span style={styles.link}>Register here</span>
           </Link>
         </div>
-        <div style={styles.guestAccessText}>Guest access available below.</div> {/* ガイドテキストを追加 */}
+        <div style={styles.guestAccessText}>Guest access available below.</div>{' '}
+        {/* ガイドテキストを追加 */}
         <button style={styles.guestButton} onClick={handleGuestLogin}>
-        Guest Login
+          Guest Login
         </button>
       </form>
     </div>
@@ -191,8 +198,8 @@ const styles = {
     padding: '12px',
     fontSize: '1.25rem',
     cursor: 'pointer' as 'pointer',
-    width: '100%', 
-    marginTop: '15px', 
+    width: '100%',
+    marginTop: '15px',
   },
   footer: {
     fontSize: '0.75rem',
