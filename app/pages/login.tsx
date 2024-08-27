@@ -34,9 +34,9 @@ const Logins: React.FC = () => {
 
   const handleGuestLogin = async () => {
     try {
-      const guestEmail = process.env.GUEST_ACCOUNT_EMAIL!;
-      const guestPassword = process.env.GUEST_ACCOUNT_PASSWORD!;
-
+      const guestEmail = process.env.NEXT_PUBLIC_GUEST_ACCOUNT_EMAIL!;
+      const guestPassword = process.env.NEXT_PUBLIC_GUEST_ACCOUNT_PASSWORD!;
+        
       const res = await signInWithEmailAndPassword(
         auth,
         guestEmail,
