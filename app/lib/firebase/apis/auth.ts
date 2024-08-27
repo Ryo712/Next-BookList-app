@@ -1,4 +1,3 @@
-// next/lib/firebase/apis/auth.ts
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,6 +6,9 @@ import {
 
 // 正しい相対パスを使用してfirebaseConfig.tsをインポート
 import { auth } from '../../../firebaseConfig';
+
+// auth をエクスポートする
+export { auth };
 
 /**
  * EmailとPasswordでサインイン
@@ -38,7 +40,6 @@ export const signInWithEmail = async (args: {
 
 /**
  * EmailとPasswordでサインアップ
- * @param username
  * @param email
  * @param password
  * @returns Promise<boolean>
