@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { signInWithEmail } from '../lib/firebase/apis/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Firebase auth の関数をインポート
+import { auth, signInWithEmail } from '../lib/firebase/apis/auth'; // 修正ポイント
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
@@ -9,7 +10,6 @@ import Link from 'next/link';
 const Logins: React.FC = () => {
   const { handleSubmit, register } = useForm();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
@@ -20,7 +20,6 @@ const Logins: React.FC = () => {
       const res = await signInWithEmail({ email, password });
       if (res) {
         console.log('ログイン成功');
-        setShowPopup(true);
         setErrorMessage(''); // 成功したらエラーメッセージをクリア
         router.push('/');
       } else {
@@ -33,13 +32,32 @@ const Logins: React.FC = () => {
     }
   });
 
+  const handleGuestLogin = async () => {
+    try {
+      const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL!;
+      const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD!;
+
+      const res = await signInWithEmailAndPassword(auth, guestEmail, guestPassword); // ここで signInWithEmailAndPassword と auth を使用
+      if (res) {
+        console.log('ゲストログイン成功');
+        setErrorMessage(''); // 成功したらエラーメッセージをクリア
+        router.push('/');
+      } else {
+        console.log('ゲストログイン失敗');
+        setErrorMessage('Guest login failed.');
+      }
+    } catch (error) {
+      console.error('ゲストログインエラー:', error);
+      setErrorMessage('An error occurred during guest login. Please try again.'); // ネットワークエラー時のメッセージ
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Think it. Make it.</h1>
       <h2 style={styles.subtitle}>Log in to your Book List account</h2>
       <form onSubmit={onSubmit} style={styles.form}>
-        {errorMessage && <div style={styles.error}>{errorMessage}</div>}{' '}
-        {/* エラーメッセージを表示 */}
+        {errorMessage && <div style={styles.error}>{errorMessage}</div>}
         <div style={styles.inputGroup}>
           <label style={styles.label} htmlFor="email">
             Email
@@ -72,13 +90,17 @@ const Logins: React.FC = () => {
         <button style={styles.loginButton} type="submit">
           Login
         </button>
+        <div style={styles.footer}>
+          Join us today!
+          <Link href="/register" passHref>
+            <span style={styles.link}>Register here</span>
+          </Link>
+        </div>
+        <div style={styles.guestAccessText}>Guest access available below.</div> {/* ガイドテキストを追加 */}
+        <button style={styles.guestButton} onClick={handleGuestLogin}>
+        Guest Login
+        </button>
       </form>
-      <div style={styles.footer}>
-        Join us today!
-        <Link href="/register" passHref>
-          <span style={styles.link}>Register here</span>
-        </Link>
-      </div>
     </div>
   );
 };
@@ -147,10 +169,30 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     padding: '12px',
-    fontSize: '1rem',
+    fontSize: '1.25rem',
     cursor: 'pointer' as 'pointer',
     width: '100%',
     marginTop: '20px',
+  },
+
+  guestAccessText: {
+    fontSize: '0.875rem',
+    color: '#888',
+    marginTop: '10px',
+    marginBottom: '5px',
+    textAlign: 'center' as 'center',
+  },
+
+  guestButton: {
+    backgroundColor: '#FD7E14',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    padding: '12px',
+    fontSize: '1.25rem',
+    cursor: 'pointer' as 'pointer',
+    width: '100%', 
+    marginTop: '15px', 
   },
   footer: {
     fontSize: '0.75rem',

@@ -19,7 +19,7 @@ import {
   getDocs,
   orderBy,
 } from 'firebase/firestore';
-import { db, getAuth } from '../firebaseConfig';
+import { db, auth } from '../firebaseConfig';
 import { UserContext, UserContextType } from '../pages/_app';
 import LogoutModal from './LogoutModal';
 
@@ -107,7 +107,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSearchResult }) => {
   };
 
   const handleLogout = () => {
-    const auth = getAuth();
     auth.signOut().then(() => {
       router.push('/login');
     });
