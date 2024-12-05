@@ -18,13 +18,13 @@ const ItemForm = () => {
       <input
         type="text"
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Name"
         className="border p-2"
       />
       <textarea
         value={description}
-        onChange={e => setDescription(e.target.value)}
+        onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"
         className="border p-2"
       />

@@ -8,7 +8,7 @@ const ItemList = () => {
   useEffect(() => {
     const fetchItems = async () => {
       const response = await axios.get('/api/items');
-      console.log("response", response);
+      console.log('response', response);
       setItems(response.data);
     };
     fetchItems();
@@ -17,7 +17,7 @@ const ItemList = () => {
   return (
     <div>
       リスト
-      {items.map(item => (
+      {items.map((item) => (
         <div key={item.id} className="border p-4">
           <h2>{item.name}</h2>
           <p>{item.description}</p>

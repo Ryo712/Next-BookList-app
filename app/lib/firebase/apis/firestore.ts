@@ -1,5 +1,12 @@
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig'; 
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
 
 // statusが1のデータを取得する関数
 export const getStatusOneData = async () => {
@@ -9,18 +16,18 @@ export const getStatusOneData = async () => {
     const querySnapshot = await getDocs(q);
 
     // クエリ結果を配列に変換して返す
-    const data = querySnapshot.docs.map(doc => ({
+    const data = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data().title,
       description: doc.data().description,
       status: doc.data().status,
       author: doc.data().author,
-      coverImage: doc.data().coverImage // 画像URLを追加
+      coverImage: doc.data().coverImage, // 画像URLを追加
     }));
-    
+
     return data;
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error('Error getting documents: ', error);
     throw error;
   }
 };
@@ -33,18 +40,18 @@ export const getStatusTwoData = async () => {
     const querySnapshot = await getDocs(q);
 
     // クエリ結果を配列に変換して返す
-    const data = querySnapshot.docs.map(doc => ({
+    const data = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data().title,
       description: doc.data().description,
       status: doc.data().status,
       author: doc.data().author,
-      coverImage: doc.data().coverImage // 画像URLを追加
+      coverImage: doc.data().coverImage, // 画像URLを追加
     }));
-    
+
     return data;
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error('Error getting documents: ', error);
     throw error;
   }
 };
@@ -57,18 +64,18 @@ export const getStatusThreeData = async () => {
     const querySnapshot = await getDocs(q);
 
     // クエリ結果を配列に変換して返す
-    const data = querySnapshot.docs.map(doc => ({
+    const data = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data().title,
       description: doc.data().description,
       status: doc.data().status,
       author: doc.data().author,
-      coverImage: doc.data().coverImage // 画像URLを追加
+      coverImage: doc.data().coverImage, // 画像URLを追加
     }));
-    
+
     return data;
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error('Error getting documents: ', error);
     throw error;
   }
 };
@@ -89,13 +96,13 @@ export const getTasks = async () => {
   try {
     const tasksCollection = collection(db, 'tasks');
     const tasksSnapshot = await getDocs(tasksCollection);
-    const tasksList = tasksSnapshot.docs.map(doc => ({
+    const tasksList = tasksSnapshot.docs.map((doc) => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
     return tasksList;
   } catch (error) {
-    console.error("Error getting tasks: ", error);
+    console.error('Error getting tasks: ', error);
     throw error;
   }
 };

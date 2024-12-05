@@ -1,7 +1,7 @@
-# BookList
+# Book List
 
 ## Overview
-BookList is a web application built with Next.js that allows users to manage their reading lists. Users can add, update, and delete books, and categorize them into "Unread," "Reading," and "Read."
+Book List is a web application built with Next.js that allows users to manage their reading lists. Users can add, update, and delete books, and categorize them into "Unread," "Reading," and "Read."
 
 ## Features
 - User authentication (sign up, log in, log out)

@@ -6,12 +6,18 @@ import { storage, db } from '../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 
 const NewsTask: React.FC = () => {
-  const [newTask, setNewTask] = useState<{ title: string; description: string; author: string; url: string; coverImage: File | null }>({
+  const [newTask, setNewTask] = useState<{
+    title: string;
+    description: string;
+    author: string;
+    url: string;
+    coverImage: File | null;
+  }>({
     title: '',
     description: '',
     author: '',
     url: '',
-    coverImage: null
+    coverImage: null,
   });
   const [preview, setPreview] = useState<string | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -30,7 +36,11 @@ const NewsTask: React.FC = () => {
     const file = e.target.files?.[0] || null;
     if (file) {
       const fileType = file.type;
-      if (fileType === 'image/png' || fileType === 'image/jpeg' || fileType === 'image/jpg') {
+      if (
+        fileType === 'image/png' ||
+        fileType === 'image/jpeg' ||
+        fileType === 'image/jpg'
+      ) {
         setNewTask({ ...newTask, coverImage: file });
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -69,7 +79,7 @@ const NewsTask: React.FC = () => {
           coverImage: coverImageUrl,
           status: 1, // ステータスの初期値を1に設定
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
 
         // Firestoreのtasksコレクションにデータを追加
@@ -96,14 +106,19 @@ const NewsTask: React.FC = () => {
             <input
               type="text"
               value={newTask.title}
-              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, title: e.target.value })
+              }
               onBlur={() => setIsEditingTitle(false)}
               style={styles.titleInput}
               autoFocus
             />
           ) : (
             <h1
-              style={{ ...styles.title, color: newTask.title ? '#000' : '#bbb' }}
+              style={{
+                ...styles.title,
+                color: newTask.title ? '#000' : '#bbb',
+              }}
               onClick={() => setIsEditingTitle(true)}
             >
               {newTask.title || 'Untitled'}
@@ -124,7 +139,10 @@ const NewsTask: React.FC = () => {
             />
           ) : (
             <div
-              style={{ ...styles.value, color: newTask.author ? '#000' : '#bbb' }}
+              style={{
+                ...styles.value,
+                color: newTask.author ? '#000' : '#bbb',
+              }}
               onClick={() => setIsEditingAuthor(true)}
             >
               {newTask.author || 'Empty'}
@@ -134,7 +152,13 @@ const NewsTask: React.FC = () => {
         <div style={styles.property}>
           <span style={styles.propertyLabel}>Cover Image</span>
           <div style={styles.coverImageContainer}>
-            {preview && <img src={preview} alt="カバー画像のプレビュー" style={styles.preview} />}
+            {preview && (
+              <img
+                src={preview}
+                alt="カバー画像のプレビュー"
+                style={styles.preview}
+              />
+            )}
             <div style={styles.addFileContainer} onClick={handleAddFileClick}>
               Add a file or image
             </div>
@@ -183,19 +207,19 @@ const NewsTask: React.FC = () => {
             />
           ) : (
             <div
-              style={{ ...styles.value, color: newTask.description ? '#000' : '#bbb' }}
+              style={{
+                ...styles.value,
+                color: newTask.description ? '#000' : '#bbb',
+              }}
               onClick={() => setIsEditingDescription(true)}
             >
               {newTask.description || 'Add a comment...'}
             </div>
           )}
         </div>
-        
+
         <div style={styles.buttonContainer}>
-          <button
-            style={styles.saveButton}
-            onClick={handleAddTask}
-          >
+          <button style={styles.saveButton} onClick={handleAddTask}>
             Save
           </button>
         </div>
@@ -255,7 +279,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '20px',
-    minHeight: '40px',  // 高さを固定
+    minHeight: '40px', // 高さを固定
   },
   propertyLabel: {
     minWidth: '80px',
@@ -268,16 +292,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: '1px solid #ddd',
     borderRadius: '4px',
     marginLeft: '10px',
-    height: '40px',  // 高さを固定
+    height: '40px', // 高さを固定
   },
   value: {
     flex: 1,
     color: '#000',
     marginLeft: '10px',
     cursor: 'pointer',
-    height: '40px',  // 高さを固定
+    height: '40px', // 高さを固定
     display: 'flex',
-    alignItems: 'center',  // テキストを中央に配置
+    alignItems: 'center', // テキストを中央に配置
   },
   coverImageContainer: {
     display: 'flex',
@@ -301,8 +325,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   buttonContainer: {
     display: 'flex',
-    justifyContent: 'flex-end', 
-    gap: '10px', 
+    justifyContent: 'flex-end',
+    gap: '10px',
     marginTop: '20px',
   },
   saveButton: {

@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { updateDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import {
+  updateDoc,
+  doc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import Sidebar from '../components/Sidebar';
 import Card from '../components/Card';
@@ -7,21 +14,27 @@ import { UserContext } from './_app';
 
 const UnreadPage: React.FC = () => {
   const user = useContext(UserContext);
-  const [unreadTasks, setUnreadTasks] = useState<{
-    id: string;
-    title: string;
-    description: string;
-    status: number;
-    author: string;
-    url: string;
-    coverImage: string;
-  }[]>([]);
+  const [unreadTasks, setUnreadTasks] = useState<
+    {
+      id: string;
+      title: string;
+      description: string;
+      status: number;
+      author: string;
+      url: string;
+      coverImage: string;
+    }[]
+  >([]);
 
   const fetchUnreadTasks = async () => {
     if (user) {
       try {
         const tasksCollection = collection(db, 'tasks');
-        const q = query(tasksCollection, where('userId', '==', user.uid), where('status', '==', 1)); // ステータスが1のタスクを取得
+        const q = query(
+          tasksCollection,
+          where('userId', '==', user.uid),
+          where('status', '==', 1)
+        ); // ステータスが1のタスクを取得
         const querySnapshot = await getDocs(q);
         const tasksData = querySnapshot.docs.map((doc) => ({
           id: doc.id,

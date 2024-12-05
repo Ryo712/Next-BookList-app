@@ -18,8 +18,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [user, setUser] = useState<UserContextType | null>(null);
-  const hideSidebarPaths = ['/login', '/register', '/new', '/cards/[id]', '/profile'];
-  const showSidebar = !hideSidebarPaths.some((path) => router.pathname.startsWith(path));
+  const hideSidebarPaths = [
+    '/login',
+    '/register',
+    '/new',
+    '/cards/[id]',
+    '/profile',
+  ];
+  const showSidebar = !hideSidebarPaths.some((path) =>
+    router.pathname.startsWith(path)
+  );
 
   useEffect(() => {
     const auth = getAuth();
@@ -59,12 +67,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <div className="flex min-h-screen">
         {showSidebar && <Sidebar onSearchResult={handleSearchResult} />}
         <div className={`flex-1 flex flex-col ${!showSidebar ? 'w-full' : ''}`}>
-          <Component 
-            {...pageProps} 
-            app={app} 
-            auth={getAuth} 
-            db={db} 
-            searchResults={searchResults} 
+          <Component
+            {...pageProps}
+            app={app}
+            auth={getAuth}
+            db={db}
+            searchResults={searchResults}
           />
         </div>
       </div>
